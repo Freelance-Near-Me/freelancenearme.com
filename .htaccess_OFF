@@ -1,0 +1,13 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www.freelancenearme.com [NC]
+RewriteCond %{HTTPS} !=on
+RewriteRule (.*) https://www.freelancenearme.com/$1 [L,R=301]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond $1 !^/(index\.php|assets/|humans\.txt)
+RewriteRule ^(.*)$ ./index.php?$1 [L,QSA]
+
+
+
+
