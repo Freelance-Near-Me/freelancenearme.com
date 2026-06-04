@@ -14,6 +14,7 @@
 
 ## Docs
 
+- [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
 - [docs/TECH_STACK.md](docs/TECH_STACK.md)
 - [docs/PHP_MIGRATION.md](docs/PHP_MIGRATION.md)
 - [TASKS.md](TASKS.md)

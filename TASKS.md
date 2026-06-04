@@ -1,6 +1,6 @@
 # Build task list — Freelance Near Me v3
 
-**Stack:** TypeScript · React 19 · Next.js 15 · Prisma · Postgres · Clerk · Stripe · Resend · Vercel Blob.
+**Stack:** TypeScript · React 19 · Next.js 16 · Prisma · Postgres · Clerk · Stripe · Resend · Vercel Blob.
 
 **Active app only:** `apps/web`. **Database:** `packages/database`. Legacy PHP in `application/` is archived — see `docs/PHP_MIGRATION.md`.
 

@@ -16,7 +16,8 @@
     "db:migrate": "npm run db:migrate -w @fnm/database",
     "db:seed": "npm run db:seed -w @fnm/database",
     "db:studio": "npm run db:studio -w @fnm/database",
-    "setup:dev": "docker compose up -d && npm install && npm run db:push && npm run db:seed",
+    "setup:dev": "bash scripts/setup-dev.sh",
+    "env:example": "cp -n apps/web/.env.example apps/web/.env 2>/dev/null || cp apps/web/.env.example apps/web/.env; grep '^DATABASE_URL=' apps/web/.env | head -1 > packages/database/.env; echo 'Wrote apps/web/.env and packages/database/.env — edit DATABASE_URL then npm run db:push && npm run db:seed'",
     "dev:db": "docker compose up -d"
   },
   "engines": {

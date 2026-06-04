@@ -6,7 +6,7 @@
 
 ## Executive summary
 
-**Current production stack (shipped):** **React 19 + Next.js 15 + TypeScript** in `apps/web`, **Postgres + Prisma**, **Clerk**, **Stripe Connect**, **Resend**, **Vercel Blob**, hosted on **Vercel**.
+**Current production stack (shipped):** **React 19 + Next.js 16 + TypeScript** in `apps/web`, **Postgres + Prisma**, **Clerk**, **Stripe Connect**, **Resend**, **Vercel Blob**, hosted on **Vercel**.
 
 The legacy **CodeIgniter PHP** app (`application/`) and the **MERN spike** (`server/` + `client/`) are **archived** — not deployed, not extended. See [TECH_STACK.md](./TECH_STACK.md) and [PHP_MIGRATION.md](./PHP_MIGRATION.md).
 
@@ -15,7 +15,7 @@ The legacy **CodeIgniter PHP** app (`application/`) and the **MERN spike** (`ser
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
 | Hosting | [Vercel](https://vercel.com) | Edge, previews, Cron, native Blob, Marketplace integrations |
-| App | **Next.js 15+** (App Router) | Single deploy unit: UI + API routes + Server Actions |
+| App | **Next.js 16+** (App Router) | Single deploy unit: UI + API routes + Server Actions |
 | Database | **Neon Postgres** + **Prisma** | Relational marketplace (users, jobs, proposals, contracts, ledger) |
 | Auth | **Clerk** (Vercel Marketplace) | OAuth, sessions, employer/freelancer metadata, lower security burden |
 | Payments | **Stripe Connect** | Replace custom `ESCROW_WALLET` / `wallet_*` logic |

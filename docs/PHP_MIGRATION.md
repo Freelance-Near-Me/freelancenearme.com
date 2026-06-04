@@ -4,7 +4,7 @@
 
 | Area | Status |
 |------|--------|
-| New user-facing app | **Live in `apps/web`** (React 19, Next.js 15, TypeScript) |
+| New user-facing app | **Live in `apps/web`** (React 19, Next.js 16, TypeScript) |
 | Legacy PHP (`application/`, `ecadmin/`, `system/`) | **Frozen** — reference only, not deployed on Vercel |
 | MERN spike (`server/`, `client/`) | **Frozen** — superseded by Next.js |
 | Production database | **Postgres (Neon)** via Prisma — not legacy MySQL |

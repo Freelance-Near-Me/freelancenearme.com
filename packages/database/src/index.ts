@@ -1,27 +1,75 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import type { PoolConfig } from "pg";
 import { PrismaClient } from "../generated/client";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
+function normalizeDatabaseUrl(raw: string): string {
+  try {
+    const url = new URL(raw.replace(/^postgresql:/, "postgres:"));
+    const isLocalPostgres =
+      (url.hostname === "localhost" || url.hostname === "127.0.0.1") &&
+      (url.port === "5432" || url.port === "");
+    // pgbouncer=true is for Prisma dev / Neon pooler — not plain Docker Postgres
+    if (isLocalPostgres && url.searchParams.get("pgbouncer") === "true") {
+      url.searchParams.delete("pgbouncer");
+      return url.toString().replace(/^postgres:/, "postgresql:");
+    }
+  } catch {
+    /* keep raw */
+  }
+  return raw;
 }
 
-function createPrismaClient() {
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaPg(pool);
+function poolConfig(): PoolConfig {
+  const raw = process.env.DATABASE_URL;
+  if (!raw) throw new Error("DATABASE_URL is not set");
+  const connectionString = normalizeDatabaseUrl(raw);
+  const url = new URL(connectionString.replace(/^postgresql:/, "postgres:"));
+  const usesPooler = url.searchParams.get("pgbouncer") === "true";
+
+  return {
+    connectionString,
+    // Prisma v7 pg defaults idleTimeout to 10s — too aggressive for Next.js dev
+    idleTimeoutMillis: 300_000,
+    connectionTimeoutMillis: 5_000,
+    keepAlive: true,
+    max: usesPooler ? 5 : 10,
+  };
+}
+
+function createPrismaClient(): PrismaClient {
+  const adapter = new PrismaPg(poolConfig(), {
+    onPoolError: (err) => {
+      console.error("[@fnm/database] pg pool error:", err);
+    },
+  });
+
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 }
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+function getPrismaClient(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
 }
+
+/** Singleton Prisma client (survives Next.js hot reload via globalThis). */
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, receiver);
+    if (typeof value === "function") {
+      return (value as (...args: unknown[]) => unknown).bind(client);
+    }
+    return value;
+  },
+});
 
 export * from "../generated/client";

@@ -41,7 +41,14 @@ npm run dev
 # → http://localhost:3000
 ```
 
-`setup:dev` uses Docker Postgres when available; otherwise it starts **Prisma local Postgres** (`npx prisma dev --detach`). The repo includes `apps/web/.env` and `packages/database/.env` for local dev (gitignored if you regenerate them).
+`setup:dev` writes `apps/web/.env` and `packages/database/.env` (gitignored). Or copy from examples:
+
+```bash
+cp apps/web/.env.example apps/web/.env
+cp apps/web/.env packages/database/.env   # Prisma needs DATABASE_URL
+```
+
+Full variable list: **[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)** · template: `apps/web/.env.example`
 
 If port 3000 is busy: `npm run dev -w web -- --port 3002`
 
@@ -62,6 +69,7 @@ npm run dev
 ```env
 DEV_AUTH_BYPASS=true
 DATABASE_URL="postgresql://fnm:fnm_dev_password@localhost:5432/freelancenearme?schema=public"
+# Do not add ?pgbouncer=true for Docker Postgres — only for Prisma dev / Neon pooler URLs
 ```
 
 - Default signed-in user: **client** (`Alex` / `client@demo.freelancenearme.com`)
@@ -71,18 +79,7 @@ Never enable `DEV_AUTH_BYPASS` in production.
 
 ### Optional integrations (local)
 
-| Variable | Purpose |
-|----------|---------|
-| Clerk keys | Real sign-in instead of bypass |
-| `STRIPE_*` | Milestone payments |
-| `RESEND_API_KEY` | Transactional email |
-| `BLOB_READ_WRITE_TOKEN` | Deliverable uploads |
-
-### Clerk
-
-1. Create an app at [clerk.com](https://clerk.com)  
-2. Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`  
-3. Webhook: `https://your-domain.com/api/webhooks/clerk` → `CLERK_WEBHOOK_SECRET`
+See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for Clerk, Stripe, Resend, and Blob setup and webhook URLs.
 
 ## Scripts
 
@@ -99,7 +96,7 @@ Never enable `DEV_AUTH_BYPASS` in production.
 
 1. Import repo · **Framework:** Next.js · **Root Directory:** `apps/web` (recommended)  
 2. Clear any **Output Directory** override (must not be `_site` from old Jekyll/GitHub Pages)  
-3. Integrations: Neon (`DATABASE_URL`), Clerk, Stripe, Resend, Blob — see `apps/web/.env.example`  
+3. Environment variables — see [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) (Neon, Clerk, Stripe, Resend, Blob)  
 4. `npm run db:migrate` against production
 
 ## Product flows (implemented)

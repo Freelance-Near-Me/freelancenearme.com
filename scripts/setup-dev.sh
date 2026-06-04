@@ -10,6 +10,11 @@ ENV_DB="$ROOT/packages/database/.env"
 
 append_pgbouncer() {
   local url="$1"
+  # Only Prisma local dev pooler needs pgbouncer=true — not Docker Postgres on :5432
+  if [[ "$url" == *"localhost:5432"* || "$url" == *"127.0.0.1:5432"* ]]; then
+    echo "$url"
+    return
+  fi
   if [[ "$url" != *"pgbouncer="* ]]; then
     if [[ "$url" == *"?"* ]]; then
       echo "${url}&pgbouncer=true"
@@ -24,19 +29,20 @@ append_pgbouncer() {
 write_env() {
   local db_url
   db_url="$(append_pgbouncer "$1")"
-  cat > "$ENV_WEB" <<EOF
-# Local development — $(date +%Y-%m-%d)
+  local template="$ROOT/scripts/env.local.template"
+  if [[ -f "$template" ]]; then
+    sed "s|{{DATABASE_URL}}|$db_url|g" "$template" > "$ENV_WEB"
+  else
+    cat > "$ENV_WEB" <<EOF
 DATABASE_URL="$db_url"
-
 DEV_AUTH_BYPASS=true
-# DEV_AUTH_USER=client   # seed_client_1 (default)
-# DEV_AUTH_USER=talent   # seed_talent_1
-
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+PLATFORM_FEE_PERCENT=10
 NEXT_PUBLIC_PLATFORM_FEE_PERCENT=10
 EOF
+  fi
   echo "DATABASE_URL=\"$db_url\"" > "$ENV_DB"
-  echo "Wrote $ENV_WEB and $ENV_DB"
+  echo "Wrote $ENV_WEB and $ENV_DB (see docs/ENVIRONMENT.md)"
 }
 
 echo "==> Installing dependencies"
