@@ -25,5 +25,12 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "overrides": {
+    "postcss": "^8.5.15",
+    "next": {
+      "postcss": "^8.5.15"
+    },
+    "undici": "^6.24.0"
   }
 }
