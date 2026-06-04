@@ -24,7 +24,9 @@ export async function getOrCreateThread(jobId: string, talentId: string) {
       messages: {
         orderBy: { createdAt: "asc" },
         include: {
-          sender: { select: { firstName: true, lastName: true, username: true } },
+          sender: {
+            select: { id: true, firstName: true, lastName: true, username: true },
+          },
         },
       },
       job: { select: { slug: true, title: true } },
@@ -92,6 +94,6 @@ export async function sendMessage(formData: FormData): Promise<void> {
     select: { slug: true },
   });
   if (job) {
-    revalidatePath(`/jobs/${job.slug}/chat/${thread.talentId}`);
+    revalidatePath(`/jobs/${job.slug}/messages/${thread.talentId}`);
   }
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listOpenJobs } from "@/actions/jobs";
 import { JobCard } from "@/components/job-card";
+import { routes } from "@/lib/routes";
 
 export default async function HomePage() {
   const jobs = await listOpenJobs();
@@ -21,19 +22,19 @@ export default async function HomePage() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/sign-up?role=client"
+              href={routes.signUp("client")}
               className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg hover:bg-blue-50"
             >
               I want to hire
             </Link>
             <Link
-              href="/sign-up?role=talent"
+              href={routes.signUp("talent")}
               className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold hover:bg-white/10"
             >
               I want to find work
             </Link>
             <Link
-              href="/jobs"
+              href={routes.jobs}
               className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold hover:bg-white/10"
             >
               Browse jobs
@@ -45,7 +46,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-end justify-between">
           <h2 className="font-serif text-3xl text-slate-900">Open projects</h2>
-          <Link href="/jobs" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+          <Link href={routes.jobs} className="text-sm font-semibold text-blue-600 hover:text-blue-700">
             View all →
           </Link>
         </div>

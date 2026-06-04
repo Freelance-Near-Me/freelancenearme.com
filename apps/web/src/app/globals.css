@@ -9,6 +9,10 @@ body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
 
+::selection {
+  @apply bg-blue-200 text-blue-950;
+}
+
 .font-serif {
   font-family: var(--font-serif);
 }

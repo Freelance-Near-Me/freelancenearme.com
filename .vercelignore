@@ -1,0 +1,19 @@
+# Legacy PHP — not part of the Next.js deployment
+application/
+ecadmin/
+system/
+assets/
+userfiles/
+js/
+*.php
+.htaccess
+.htaccess_OFF
+
+# Archived MERN prototype
+server/
+client/
+
+# Local / tooling
+.git
+node_modules
+docker-compose.yml

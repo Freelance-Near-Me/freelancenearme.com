@@ -1,7 +1,9 @@
 import { MilestoneStatus } from "@fnm/database";
 import { uploadDeliverable } from "@/actions/deliverables";
+import { Field } from "@/components/ui/field";
 import { formatFileSize, isBlobConfigured } from "@/lib/blob";
 import { Button } from "@/components/ui/button";
+import { Input, Textarea } from "@/components/ui/input";
 
 type Milestone = { id: string; title: string; status: MilestoneStatus };
 
@@ -82,34 +84,18 @@ export function DeliverablesPanel({
         >
           <input type="hidden" name="contractId" value={contractId} />
           <h3 className="font-medium">Upload deliverable</h3>
+          <Field label="Milestone" name="milestoneId" as="select" required>
+            {uploadableMilestones.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.title}
+              </option>
+            ))}
+          </Field>
           <label className="block text-sm">
-            <span className="font-medium">Milestone</span>
-            <select
-              name="milestoneId"
-              required
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2"
-            >
-              {uploadableMilestones.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.title}
-                </option>
-              ))}
-            </select>
+            <span className="font-medium text-slate-700">File</span>
+            <Input name="file" type="file" required className="mt-1.5" disabled={!blobOn} />
           </label>
-          <label className="block text-sm">
-            <span className="font-medium">File</span>
-            <input
-              name="file"
-              type="file"
-              required
-              className="mt-1 w-full text-sm"
-              disabled={!blobOn}
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="font-medium">Notes (optional)</span>
-            <textarea name="notes" rows={2} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
-          </label>
+          <Field label="Notes (optional)" name="notes" as="textarea" rows={2} />
           <Button type="submit" disabled={!blobOn}>
             Upload
           </Button>

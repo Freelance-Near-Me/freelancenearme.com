@@ -6,9 +6,11 @@
 
 ## Executive summary
 
-The legacy app is a **CodeIgniter monolith** with custom wallet/escrow, 30+ modules, and PHP-session auth. The current MERN scaffold (`server/` + `client/`) proves core CRUD flows but is **not the best production shape for Vercel**.
+**Current production stack (shipped):** **React 19 + Next.js 15 + TypeScript** in `apps/web`, **Postgres + Prisma**, **Clerk**, **Stripe Connect**, **Resend**, **Vercel Blob**, hosted on **Vercel**.
 
-**Recommended target architecture:**
+The legacy **CodeIgniter PHP** app (`application/`) and the **MERN spike** (`server/` + `client/`) are **archived** — not deployed, not extended. See [TECH_STACK.md](./TECH_STACK.md) and [PHP_MIGRATION.md](./PHP_MIGRATION.md).
+
+**Target architecture (achieved for core flows):**
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
@@ -23,7 +25,7 @@ The legacy app is a **CodeIgniter monolith** with custom wallet/escrow, 30+ modu
 | Realtime | **Ably** or Pusher | Messaging (Phase 4) |
 | Cache / rate limits | **Upstash Redis** | Sessions, job alerts, API limits |
 
-Treat the existing MERN code as a **UX/API prototype** to migrate into Next.js, not the long-term split Express deployment (awkward on Vercel serverless limits and cold starts).
+The MERN code was a short-lived prototype; its flows now live in the Next.js app (single Vercel deploy).
 
 ---
 
@@ -318,13 +320,17 @@ Express `server/` can run temporarily on **Railway/Fly** if needed during migrat
 
 ---
 
-## Migration path from today
+## Migration path from PHP
 
-1. **Keep** `client/` UI patterns (home, jobs, talents) as design reference.
-2. **Scaffold** `apps/web` Next.js + Prisma + Clerk on Vercel.
-3. **Import** seed data from Mongo seed or one-time MySQL export script → Postgres.
-4. **Redirect** production domain to Vercel when Phase 1 + 2 pass smoke tests.
-5. **Archive** PHP to `legacy/` (read-only) after 30-day parallel run.
+| Step | Status |
+|------|--------|
+| Scaffold `apps/web` (React / Next.js) + Prisma + Clerk | Done |
+| Core hire loop (jobs, proposals, contracts) | Done |
+| Stripe escrow + deliverables + notifications | Done |
+| Document PHP retirement + `.vercelignore` | Done |
+| MySQL → Neon data import | Pending cutover |
+| DNS to Vercel + decommission PHP host | Pending |
+| Legacy URL redirects | Pending |
 
 ---
 
@@ -341,6 +347,4 @@ Express `server/` can run temporarily on **Railway/Fly** if needed during migrat
 
 ## Next implementation decision
 
-**Start Phase 1 in Next.js** (not extend Express MERN): proposals + contracts + Clerk + Neon. The highest-magnitude missing piece is the **proposal → hire** loop — everything else is secondary.
-
-When ready, say which to build first: **Next.js scaffold on Vercel**, **MySQL→Neon migration script**, or **proposal flow UI**.
+**Extend the React app only** (`apps/web`). Highest leverage next: **Phase 4** (search, reviews) and **production cutover** (MySQL import, DNS, PHP host shutdown). Do not add PHP or Express features.

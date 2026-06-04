@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "2mb",
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/jobs/:slug/chat/:participantId",
+        destination: "/jobs/:slug/messages/:participantId",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

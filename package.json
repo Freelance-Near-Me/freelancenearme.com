@@ -2,12 +2,10 @@
   "name": "freelancenearme",
   "private": true,
   "version": "3.0.0",
-  "description": "Freelance Near Me — Next.js marketplace on Vercel",
+  "description": "Freelance Near Me — TypeScript React (Next.js) marketplace; legacy PHP archived",
   "workspaces": [
     "apps/web",
-    "packages/database",
-    "server",
-    "client"
+    "packages/database"
   ],
   "scripts": {
     "postinstall": "npm run db:generate",
@@ -17,11 +15,7 @@
     "db:push": "npm run db:push -w @fnm/database",
     "db:migrate": "npm run db:migrate -w @fnm/database",
     "db:seed": "npm run db:seed -w @fnm/database",
-    "db:studio": "npm run db:studio -w @fnm/database",
-    "legacy:dev": "concurrently -n server,client -c blue,green \"npm run dev -w server\" \"npm run dev -w client\""
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
+    "db:studio": "npm run db:studio -w @fnm/database"
   },
   "engines": {
     "node": ">=20"

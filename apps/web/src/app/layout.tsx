@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const inner = (
     <>
       <SiteHeader />
-      {children}
+      <main className="flex-1">{children}</main>
       <footer className="mt-auto border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
         © {new Date().getFullYear()} Freelance Near Me
       </footer>

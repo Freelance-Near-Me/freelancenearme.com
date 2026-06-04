@@ -1,97 +1,95 @@
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { UserRole } from "@fnm/database";
 import { prisma } from "@fnm/database";
 import { getCurrentUser } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-const links = [
-  { href: "/jobs", label: "Find jobs" },
-  { href: "/talents", label: "Find talent" },
+const publicLinks = [
+  { href: routes.jobs, label: "Jobs" },
+  { href: routes.talents, label: "Talent" },
   { href: "/how-it-works", label: "How it works" },
 ];
+
+async function unreadCount(userId: string) {
+  return prisma.notification.count({ where: { userId, read: false } });
+}
+
+function NotificationBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
 
 export async function SiteHeader() {
   const hasClerk = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const user = await getCurrentUser();
-  const unread =
-    user != null
-      ? await prisma.notification.count({
-          where: { userId: user.id, read: false },
-        })
-      : 0;
+  const unread = user ? await unreadCount(user.id) : 0;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4">
-        <Link href="/" className="font-serif text-xl font-medium tracking-tight text-slate-900">
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+        <Link href={routes.home} className="font-serif text-xl font-medium tracking-tight text-slate-900">
           Freelance Near Me
         </Link>
-        <nav className="hidden items-center gap-6 md:flex">
-          {links.map((l) => (
+
+        <nav className="hidden items-center gap-5 md:flex" aria-label="Main">
+          {publicLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900"
+              className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
             >
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+
+        <div className="flex items-center gap-2 sm:gap-3">
           {hasClerk ? (
             <>
               <SignedOut>
-                <Link href="/sign-in" className="text-sm font-medium text-slate-600">
+                <Link href={routes.signIn} className="hidden text-sm font-medium text-slate-600 sm:inline">
                   Log in
                 </Link>
-                <Link
-                  href="/sign-up?role=client"
-                  className={cn(
-                    "rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white",
-                    "hover:bg-blue-700"
-                  )}
-                >
-                  Get started
+                <Link href={routes.signUp("client")}>
+                  <Button>Get started</Button>
                 </Link>
               </SignedOut>
               <SignedIn>
                 <Link
-                  href="/notifications"
-                  className="relative hidden text-sm font-medium text-slate-600 sm:inline"
+                  href={routes.notifications}
+                  className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"
                 >
-                  Notifications
-                  {unread > 0 && (
-                    <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
-                      {unread > 9 ? "9+" : unread}
-                    </span>
-                  )}
+                  Alerts
+                  <NotificationBadge count={unread} />
                 </Link>
-                <Link href="/dashboard" className="hidden text-sm font-medium text-slate-600 sm:inline">
+                <Link href={routes.dashboard} className="hidden text-sm font-medium text-slate-600 md:inline">
                   Dashboard
                 </Link>
-                <Link href="/profile" className="hidden text-sm font-medium text-slate-600 sm:inline">
-                  Profile
-                </Link>
-                <UserButton afterSignOutUrl="/" />
+                {user?.role === UserRole.CLIENT && (
+                  <Link href={routes.postJob} className="hidden md:inline">
+                    <Button variant="secondary">Post job</Button>
+                  </Link>
+                )}
+                <UserButton afterSignOutUrl={routes.home} />
               </SignedIn>
             </>
           ) : (
             <>
               {user && (
-                <Link
-                  href="/notifications"
-                  className="relative text-sm font-medium text-slate-600"
-                >
-                  Notifications
-                  {unread > 0 && (
-                    <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
-                      {unread > 9 ? "9+" : unread}
-                    </span>
-                  )}
+                <Link href={routes.notifications} className="relative text-sm font-medium text-slate-600">
+                  Alerts
+                  <NotificationBadge count={unread} />
                 </Link>
               )}
-              <Link href="/dashboard" className="text-sm font-medium text-slate-600">
-                Dashboard (dev)
+              <Link href={routes.dashboard} className="text-sm font-medium text-slate-600">
+                Dashboard
               </Link>
             </>
           )}

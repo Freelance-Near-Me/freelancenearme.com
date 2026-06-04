@@ -1,10 +1,23 @@
 # Build task list — Freelance Near Me v3
 
-Track progress here. **Active app:** `apps/web` (Next.js). **Database:** `packages/database` (Prisma + Neon).
+**Stack:** TypeScript · React 19 · Next.js 15 · Prisma · Postgres · Clerk · Stripe · Resend · Vercel Blob.
+
+**Active app only:** `apps/web`. **Database:** `packages/database`. Legacy PHP in `application/` is archived — see `docs/PHP_MIGRATION.md`.
 
 Legend: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ---
+
+## PHP → React migration
+
+- [x] Production app is Next.js (React) — not PHP
+- [x] Document stack (`docs/TECH_STACK.md`) and migration (`docs/PHP_MIGRATION.md`)
+- [x] Archive markers on `application/`, `server/`, `client/`
+- [x] Exclude legacy PHP from Vercel (`.vercelignore`)
+- [ ] Rotate legacy MySQL credentials from PHP config
+- [ ] One-time MySQL → Neon data import (when cutting over DNS)
+- [ ] Decommission PHP hosting after DNS points to Vercel
+- [ ] Legacy URL redirects (high-traffic PHP routes → Next.js)
 
 ## Phase 0 — Foundation
 
@@ -75,7 +88,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done
 - [ ] Saved searches + Vercel Cron alerts
 - [ ] Reviews + success score
 
-## Deprecated / reference only
+## Archived (do not extend)
 
-- `server/` + `client/` — MERN prototype (do not extend)
-- `application/` — legacy PHP (read-only)
+- `application/` — PHP / CodeIgniter (read-only reference)
+- `server/` + `client/` — MERN prototype (read-only reference)
