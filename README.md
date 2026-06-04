@@ -67,10 +67,10 @@ After schema changes: `npm run db:push` (or `db:migrate` for production).
 ## Deploy to Vercel
 
 1. Import repo on Vercel  
-2. Set **Root Directory** to `apps/web`  
-3. Add integration: **Neon** → `DATABASE_URL`  
-4. Add **Clerk** keys  
-5. Build command (if not auto): `cd ../.. && npm install && npm run db:generate && npm run build -w web`  
+2. Set **Root Directory** to `apps/web` (recommended) or leave at repo root — both work with the included `vercel.json` files  
+3. **Framework Preset** must be **Next.js** (not Jekyll). If deploy fails looking for `_site`, clear **Output Directory** in project settings and redeploy.  
+4. Add integration: **Neon** → `DATABASE_URL`  
+5. Add **Clerk**, **Stripe**, **Resend**, and **Blob** env vars (see `apps/web/.env.example`)  
 6. Run migrations against production: `npm run db:migrate`
 
 ## Core user flow (implemented)
