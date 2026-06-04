@@ -15,14 +15,17 @@
     "db:push": "npm run db:push -w @fnm/database",
     "db:migrate": "npm run db:migrate -w @fnm/database",
     "db:seed": "npm run db:seed -w @fnm/database",
-    "db:studio": "npm run db:studio -w @fnm/database"
+    "db:studio": "npm run db:studio -w @fnm/database",
+    "setup:dev": "docker compose up -d && npm install && npm run db:push && npm run db:seed",
+    "dev:db": "docker compose up -d"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.9"
   },
   "overrides": {
     "postcss": "8.5.15",
     "next": {
+      ".": "16.2.7",
       "postcss": "8.5.15"
     },
     "undici": "6.26.0"

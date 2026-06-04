@@ -7,10 +7,10 @@ The production application is a **TypeScript React** app on **Next.js**. Legacy 
 | Layer | Technology | Role |
 |-------|------------|------|
 | **Language** | TypeScript 5.x | End-to-end type safety |
-| **UI** | React 19 + Next.js 15 (App Router) | Server & client components, routing, SSR |
+| **UI** | React 19 + Next.js 16 (App Router, Turbopack) | Server & client components, routing, SSR |
 | **Styling** | Tailwind CSS 4 | Layout and design tokens |
 | **Auth** | Clerk | Sign-in, sessions, roles (`client` / `talent`) |
-| **Database** | PostgreSQL (Neon) + Prisma 6 | Users, jobs, proposals, contracts, milestones |
+| **Database** | PostgreSQL (Neon) + Prisma 7 (`@prisma/adapter-pg`) | Users, jobs, proposals, contracts, milestones |
 | **Payments** | Stripe Connect | Milestone escrow, payouts, platform fee |
 | **Email** | Resend | Transactional notifications |
 | **Files** | Vercel Blob | Contract deliverables |
@@ -44,6 +44,16 @@ server/ + client/      ← ARCHIVED MERN spike — do not extend
 | MERN prototype (`server/` + `client/`) | Same Next.js app (single deploy) |
 
 See [PHP_MIGRATION.md](./PHP_MIGRATION.md) for module mapping and data migration notes.
+
+## Version policy (2026)
+
+| Package | Pinned | Notes |
+|---------|--------|-------|
+| Next.js | 16.x | Turbopack default; Node **20.9+** required |
+| Clerk | 7.x | Async `auth()` / `clerkClient()`; `<Show>` for signed-in UI |
+| Prisma | 7.x | `prisma.config.ts`, generated client, `@prisma/adapter-pg` |
+| Zod | 4.x | Form validation in server actions |
+| Stripe | 22.x | Connect checkout, transfers, webhooks |
 
 ## Planned additions (Phase 4+)
 

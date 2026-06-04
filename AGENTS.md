@@ -2,8 +2,8 @@
 
 ## Stack (authoritative)
 
-- **App:** `apps/web` — Next.js 15, React 19, TypeScript, Tailwind CSS 4
-- **DB:** `packages/database` — Prisma + PostgreSQL (Neon)
+- **App:** `apps/web` — Next.js 16, React 19, TypeScript, Tailwind CSS 4
+- **DB:** `packages/database` — Prisma 7 + `@prisma/adapter-pg` + PostgreSQL (Neon)
 - **Auth:** Clerk · **Payments:** Stripe Connect · **Email:** Resend · **Files:** Vercel Blob
 - **Deploy:** Vercel (framework: Next.js)
 

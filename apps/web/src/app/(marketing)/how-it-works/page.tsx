@@ -5,7 +5,10 @@ export default function HowItWorksPage() {
     { title: "Post or browse", body: "Clients post jobs with budget and scope. Talent browses open projects." },
     { title: "Propose", body: "Freelancers submit proposals with bid, timeline, and cover letter." },
     { title: "Hire", body: "Clients shortlist, send an offer, and open a contract." },
-    { title: "Deliver & pay", body: "Work happens in the contract room. Stripe escrow comes in Phase 2." },
+    {
+      title: "Deliver & pay",
+      body: "Work in the contract workspace: upload deliverables, fund milestones with Stripe escrow, and release payout on approval.",
+    },
   ];
 
   return (

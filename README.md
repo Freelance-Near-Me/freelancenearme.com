@@ -1,6 +1,6 @@
 # Freelance Near Me
 
-A **TypeScript React** freelance marketplace built with **Next.js 15**, deployed on **Vercel**, backed by **Neon Postgres**.
+A **TypeScript React** freelance marketplace built with **Next.js 16**, deployed on **Vercel**, backed by **Neon Postgres**.
 
 The legacy **PHP (CodeIgniter)** site in `application/` is **retired** — kept in the repo for reference only. All new work happens in `apps/web`.
 
@@ -11,7 +11,7 @@ The legacy **PHP (CodeIgniter)** site in `application/` is **retired** — kept 
 | **Language** | TypeScript |
 | **Frontend** | React 19, Next.js App Router, Tailwind CSS 4 |
 | **Backend** | Next.js Server Actions + API routes (no PHP) |
-| **Database** | PostgreSQL + Prisma (`packages/database`) |
+| **Database** | PostgreSQL + Prisma 7 (`packages/database`, `@prisma/adapter-pg`) |
 | **Auth** | Clerk |
 | **Payments** | Stripe Connect (milestone escrow) |
 | **Email** | Resend |
@@ -33,28 +33,50 @@ Full details: [docs/TECH_STACK.md](docs/TECH_STACK.md) · PHP retirement: [docs/
 ## Quick start
 
 ```bash
+# 1. Start Postgres + install deps + schema + seed
+npm run setup:dev
+
+# 2. Run the app
+npm run dev
+# → http://localhost:3000
+```
+
+`setup:dev` uses Docker Postgres when available; otherwise it starts **Prisma local Postgres** (`npx prisma dev --detach`). The repo includes `apps/web/.env` and `packages/database/.env` for local dev (gitignored if you regenerate them).
+
+If port 3000 is busy: `npm run dev -w web -- --port 3002`
+
+**Manual setup** (if you prefer step by step):
+
+```bash
+docker compose up -d
 npm install
-
-docker compose up -d   # local Postgres
-
-cp apps/web/.env.example apps/web/.env
-cp packages/database/.env.example packages/database/.env
-# Same DATABASE_URL in both files
-
 npm run db:push
 npm run db:seed
-npm run dev            # http://localhost:3000
+npm run dev
 ```
 
 ### Local dev without Clerk
 
+`apps/web/.env` should include:
+
 ```env
-# apps/web/.env
 DEV_AUTH_BYPASS=true
-DATABASE_URL=postgresql://...
+DATABASE_URL="postgresql://fnm:fnm_dev_password@localhost:5432/freelancenearme?schema=public"
 ```
 
+- Default signed-in user: **client** (`Alex` / `client@demo.freelancenearme.com`)
+- Talent flows: set `DEV_AUTH_USER=talent` and restart dev server
+
 Never enable `DEV_AUTH_BYPASS` in production.
+
+### Optional integrations (local)
+
+| Variable | Purpose |
+|----------|---------|
+| Clerk keys | Real sign-in instead of bypass |
+| `STRIPE_*` | Milestone payments |
+| `RESEND_API_KEY` | Transactional email |
+| `BLOB_READ_WRITE_TOKEN` | Deliverable uploads |
 
 ### Clerk
 

@@ -11,6 +11,8 @@ server/dist/
 client/dist/
 apps/web/.next/
 apps/web/out/
+*.tsbuildinfo
+packages/database/generated/
 
 # Logs
 *.log

@@ -16,7 +16,7 @@ const baseSchema = z.object({
 const clientSchema = baseSchema.extend({
   companyName: z.string().optional(),
   companySize: z.string().optional(),
-  website: z.string().url().optional().or(z.literal("")),
+  website: z.union([z.url(), z.literal("")]).optional(),
   bio: z.string().max(2000).optional(),
 });
 

@@ -5,7 +5,9 @@ import { upsertUserFromClerk, type ClerkUserPayload } from "@/lib/clerk-sync";
 
 export async function getCurrentUser(): Promise<User | null> {
   if (process.env.DEV_AUTH_BYPASS === "true") {
-    return prisma.user.findFirst({ where: { clerkId: "seed_client_1" } });
+    const clerkId =
+      process.env.DEV_AUTH_USER === "talent" ? "seed_talent_1" : "seed_client_1";
+    return prisma.user.findUnique({ where: { clerkId } });
   }
 
   const { userId } = await auth();

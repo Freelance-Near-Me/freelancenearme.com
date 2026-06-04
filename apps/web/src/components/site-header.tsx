@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 import { UserRole } from "@fnm/database";
 import { prisma } from "@fnm/database";
 import { getCurrentUser } from "@/lib/auth";
@@ -53,15 +53,15 @@ export async function SiteHeader() {
         <div className="flex items-center gap-2 sm:gap-3">
           {hasClerk ? (
             <>
-              <SignedOut>
+              <Show when="signed-out">
                 <Link href={routes.signIn} className="hidden text-sm font-medium text-slate-600 sm:inline">
                   Log in
                 </Link>
                 <Link href={routes.signUp("client")}>
                   <Button>Get started</Button>
                 </Link>
-              </SignedOut>
-              <SignedIn>
+              </Show>
+              <Show when="signed-in">
                 <Link
                   href={routes.notifications}
                   className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"
@@ -77,8 +77,8 @@ export async function SiteHeader() {
                     <Button variant="secondary">Post job</Button>
                   </Link>
                 )}
-                <UserButton afterSignOutUrl={routes.home} />
-              </SignedIn>
+                <UserButton />
+              </Show>
             </>
           ) : (
             <>

@@ -1,6 +1,12 @@
-import { PrismaClient, UserRole, JobStatus, BillingMode, WorkEnvironment, ExperienceLevel } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import "dotenv/config";
+import {
+  prisma,
+  UserRole,
+  JobStatus,
+  BillingMode,
+  WorkEnvironment,
+  ExperienceLevel,
+} from "../src/index.js";
 
 function slugify(text: string) {
   return text
