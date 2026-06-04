@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+server/dist/
+client/dist/
+apps/web/.next/
+apps/web/out/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Legacy PHP runtime (keep tracked source; ignore uploads/cache if added later)
+# userfiles/

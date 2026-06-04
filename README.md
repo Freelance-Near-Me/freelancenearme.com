@@ -1,37 +1,106 @@
-## Welcome to GitHub Pages
+# Freelance Near Me
 
-You can use the [editor on GitHub](https://github.com/Freelance-Near-Me/freelancenearme.com/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Modern freelance marketplace — **Next.js on Vercel**, **Neon Postgres**, **Clerk**, **Prisma**.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Active application
 
-### Markdown
+| Path | Purpose |
+|------|---------|
+| `apps/web` | **Production app** — run this |
+| `packages/database` | Prisma schema & client (`@fnm/database`) |
+| `TASKS.md` | Systematic build checklist |
+| `docs/PRODUCT_MODERNIZATION.md` | Strategy & phases |
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Legacy: `application/` (PHP), `server/` + `client/` (MERN prototype) — do not extend.
 
-```markdown
-Syntax highlighted code block
+## Quick start
 
-# Header 1
-## Header 2
-### Header 3
+```bash
+npm install
 
-- Bulleted
-- List
+# Database (Docker)
+docker compose up -d
 
-1. Numbered
-2. List
+# Env: copy and set DATABASE_URL + Clerk keys
+cp apps/web/.env.example apps/web/.env
+cp packages/database/.env.example packages/database/.env
+# Use the same DATABASE_URL in both .env files
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+npm run db:push      # apply schema (dev)
+npm run db:seed      # demo jobs + users
+npm run dev          # http://localhost:3000
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Local dev without Clerk
 
-### Jekyll Themes
+```env
+# apps/web/.env
+DEV_AUTH_BYPASS=true
+DATABASE_URL=postgresql://...
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Freelance-Near-Me/freelancenearme.com/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Uses seed client user for auth. **Never enable in production.**
 
-### Support or Contact
+### Clerk setup
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+1. Create app at [clerk.com](https://clerk.com) or Vercel Marketplace  
+2. Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in `apps/web/.env`  
+3. After sign-up, users complete `/onboarding`
+4. **Webhook:** In Clerk Dashboard → Webhooks → add endpoint  
+   `https://your-domain.com/api/webhooks/clerk`  
+   Subscribe to `user.created`, `user.updated`, `user.deleted`  
+   Copy signing secret to `CLERK_WEBHOOK_SECRET`
+
+After schema changes: `npm run db:push` (or `db:migrate` for production).
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Next.js dev server |
+| `npm run build` | Production build |
+| `npm run db:push` | Push Prisma schema |
+| `npm run db:migrate` | Create migration |
+| `npm run db:seed` | Demo data |
+| `npm run db:studio` | Prisma Studio |
+
+## Deploy to Vercel
+
+1. Import repo on Vercel  
+2. Set **Root Directory** to `apps/web`  
+3. Add integration: **Neon** → `DATABASE_URL`  
+4. Add **Clerk** keys  
+5. Build command (if not auto): `cd ../.. && npm install && npm run db:generate && npm run build -w web`  
+6. Run migrations against production: `npm run db:migrate`
+
+## Core user flow (implemented)
+
+1. **Client** posts job → `/jobs/post`  
+2. **Talent** submits proposal on job page  
+3. **Client** shortlists → **Send offer** → contract  
+4. **Talent** accepts contract → `/contracts/[id]`  
+
+### Stripe & email (Phase 2)
+
+1. Stripe Dashboard → Connect → enable Express accounts  
+2. Webhook: `https://your-domain.com/api/webhooks/stripe`  
+   Events: `checkout.session.completed`, `account.updated`  
+3. Resend: verify domain or use `onboarding@resend.dev` for dev  
+4. Talent: **Dashboard → Payout settings** before clients can fund milestones  
+
+**Milestone payment flow:** Client funds (Checkout) → `FUNDED` → Talent submits → Client approves → Stripe transfer to talent.
+
+### Work delivery (Phase 3)
+
+1. Vercel project → Storage → Blob → `BLOB_READ_WRITE_TOKEN` in `apps/web/.env`  
+2. Contract workspace: upload deliverables per funded milestone, activity sidebar, in-app notifications at `/notifications`  
+3. Events also create `Notification` rows (proposals, offers, milestones, deliverables, messages on active contracts)
+
+## Demo seed logins
+
+Mapped to `clerkId` placeholders until Clerk sync:
+
+- Client: `client@demo.freelancenearme.com`  
+- Talent: `talent@demo.freelancenearme.com`  
+
+Use with `DEV_AUTH_BYPASS=true` or link Clerk users via webhook (Phase 1 task).
