@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { isClerkConfigured, isDevAuthBypass } from "@/lib/env";
+import { isClerkConfigured, isDevAuthBypass } from "@/lib/env-clerk";
 
 const isPublicRoute = createRouteMatcher([
   "/",
