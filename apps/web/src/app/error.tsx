@@ -6,7 +6,11 @@ import Link from "next/link";
 type Health = {
   ok?: boolean;
   database?: string;
+  databaseEnv?: string | null;
+  databaseKeysFound?: string[];
+  databaseError?: string;
   clerk?: string;
+  clerkMissing?: string[];
 };
 
 export default function Error({
@@ -40,9 +44,21 @@ export default function Error({
             <strong className={health.database === "ok" ? "text-green-700" : "text-amber-700"}>
               {health.database ?? "unknown"}
             </strong>
+            {health.databaseEnv && (
+              <span className="block text-xs text-slate-500">Using env: {health.databaseEnv}</span>
+            )}
+            {health.databaseKeysFound && health.databaseKeysFound.length > 0 && (
+              <span className="block text-xs text-slate-500">
+                Keys found: {health.databaseKeysFound.join(", ")}
+              </span>
+            )}
+            {health.database === "error" && health.databaseError && (
+              <span className="block text-xs text-red-600">{health.databaseError}</span>
+            )}
             {health.database !== "ok" && (
               <span className="block text-xs text-slate-500">
-                Set DATABASE_URL or connect the Neon integration (POSTGRES_PRISMA_URL).
+                Connect Neon to this Vercel project (Production) or set DATABASE_URL /
+                DATABASE_URL_UNPOOLED, then redeploy.
               </span>
             )}
           </li>
@@ -55,7 +71,9 @@ export default function Error({
             </strong>
             {health.clerk !== "configured" && (
               <span className="block text-xs text-slate-500">
-                Set both NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY.
+                {health.clerkMissing?.length
+                  ? `Missing: ${health.clerkMissing.join(", ")}`
+                  : "Set both NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY in Vercel → Production."}
               </span>
             )}
           </li>

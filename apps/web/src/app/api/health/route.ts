@@ -1,27 +1,36 @@
 import { NextResponse } from "next/server";
-import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
+import { getClerkDiagnostics, getDatabaseDiagnostics } from "@/lib/env";
 
 export async function GET() {
-  let database = "not_configured" as "ok" | "error" | "not_configured";
+  const dbDiag = getDatabaseDiagnostics();
+  const clerkDiag = getClerkDiagnostics();
 
-  if (isDatabaseConfigured()) {
+  let database = "not_configured" as "ok" | "error" | "not_configured";
+  let databaseError: string | undefined;
+
+  if (dbDiag.configured) {
     try {
       const { prisma } = await import("@fnm/database");
       await prisma.$queryRaw`SELECT 1`;
       database = "ok";
-    } catch {
+    } catch (err) {
       database = "error";
+      databaseError = err instanceof Error ? err.message : "connection failed";
     }
   }
 
-  const ok = database === "ok";
+  const ok = database === "ok" && clerkDiag.configured;
 
   return NextResponse.json(
     {
       ok,
       app: "freelancenearme-web",
       database,
-      clerk: isClerkConfigured() ? "configured" : "not_configured",
+      databaseEnv: dbDiag.activeKey ?? null,
+      databaseKeysFound: dbDiag.keysFound,
+      ...(databaseError ? { databaseError } : {}),
+      clerk: clerkDiag.configured ? "configured" : "not_configured",
+      clerkMissing: clerkDiag.missing,
     },
     { status: ok ? 200 : 503 }
   );

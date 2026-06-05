@@ -18,6 +18,12 @@ With **Root Directory = `apps/web`**, Vercel runs the build from the app folder 
 
 Environment variables: [ENVIRONMENT.md](./ENVIRONMENT.md).
 
+**Neon:** In Vercel → **Storage** → connect your Neon database to the **freelancenearme.com** project and enable **Production**. That injects `DATABASE_URL` / `DATABASE_URL_UNPOOLED` (names depend on your integration). Redeploy after linking.
+
+**Clerk:** Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` manually under **Settings → Environment Variables** (Production), or install the Clerk integration from the Vercel Marketplace.
+
+Check: `https://freelancenearmecom.vercel.app/api/health` should return `database: "ok"` and `clerk: "configured"`.
+
 ---
 
 ## If Root Directory is the repo root (`.`)

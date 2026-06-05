@@ -25,7 +25,8 @@ npm install && npm run db:push && npm run db:seed && npm run dev
 | Variable | Required | Where | Purpose |
 |----------|----------|-------|---------|
 | `DATABASE_URL` | **Yes** | Web + database package | PostgreSQL (Neon, Docker, or Prisma dev) |
-| `POSTGRES_PRISMA_URL` | Neon on Vercel | Auto from Neon integration | Used if `DATABASE_URL` is unset (Prisma-optimized pooled URL) |
+| `DATABASE_URL_UNPOOLED` | Vercel + Neon | Auto from linked storage | Direct Neon URL (no pooler) |
+| `POSTGRES_PRISMA_URL` | Neon on Vercel | Auto from Neon integration | Prisma-optimized pooled URL |
 | `POSTGRES_URL` | Neon on Vercel | Auto from Neon integration | Fallback pooled URL |
 | `NEXT_PUBLIC_APP_URL` | **Yes** (prod) | Web | Public site URL for redirects & links |
 | `DEV_AUTH_BYPASS` | Local only | Web | `true` = skip Clerk, use seed users |

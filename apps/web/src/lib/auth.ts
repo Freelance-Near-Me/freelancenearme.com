@@ -41,7 +41,9 @@ export async function requireUser() {
     );
   }
   if (!isDatabaseConfigured()) {
-    throw new Error("DATABASE_URL (or POSTGRES_PRISMA_URL) is not configured on the server.");
+    throw new Error(
+      "Database URL is not configured (connect Neon to this Vercel project or set DATABASE_URL_UNPOOLED)."
+    );
   }
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
