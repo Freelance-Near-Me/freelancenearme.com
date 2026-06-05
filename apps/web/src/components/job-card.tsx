@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatBudgetRange } from "@/lib/format";
+import { formatDistanceMiles } from "@/lib/geocode";
 import { routes } from "@/lib/routes";
 
 type JobCardProps = {
@@ -17,6 +18,8 @@ type JobCardProps = {
   category?: { name: string; slug: string } | null;
   poster?: { firstName: string; lastName: string; city?: string | null; country?: string | null };
   proposalCount?: number;
+  location?: { city?: string | null; country?: string | null; postcode?: string | null };
+  distanceMiles?: number;
 };
 
 export function JobCard({
@@ -32,8 +35,12 @@ export function JobCard({
   category,
   poster,
   proposalCount,
+  location: jobLocation,
+  distanceMiles,
 }: JobCardProps) {
-  const location = [poster?.city, poster?.country].filter(Boolean).join(", ");
+  const locationText = [jobLocation?.postcode, jobLocation?.city, jobLocation?.country]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <Card className="transition hover:border-blue-200 hover:shadow-md">
@@ -60,13 +67,20 @@ export function JobCard({
           </span>
           <span className="capitalize text-slate-500">{environment.toLowerCase()}</span>
         </div>
-        {poster && (
-          <p className="mt-3 text-xs text-slate-500">
-            {poster.firstName} {poster.lastName}
-            {location && ` · ${location}`}
-            {proposalCount != null && ` · ${proposalCount} proposals`}
-          </p>
-        )}
+        <p className="mt-3 text-xs text-slate-500">
+          {poster && (
+            <>
+              {poster.firstName} {poster.lastName}
+              {proposalCount != null && ` · ${proposalCount} proposals`}
+            </>
+          )}
+          {locationText && (
+            <span className={poster ? " block" : ""}>
+              {locationText}
+              {distanceMiles != null && ` · ${formatDistanceMiles(distanceMiles)}`}
+            </span>
+          )}
+        </p>
       </CardBody>
     </Card>
   );

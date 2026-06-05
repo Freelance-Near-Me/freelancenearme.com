@@ -5,12 +5,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
+import { geocodeLocation } from "@/lib/geocode";
 
 const baseSchema = z.object({
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
   country: z.string().optional(),
   city: z.string().optional(),
+  postcode: z.string().optional(),
 });
 
 const clientSchema = baseSchema.extend({
@@ -48,6 +50,7 @@ export async function updateProfile(formData: FormData): Promise<void> {
       lastName: formData.get("lastName"),
       country: formData.get("country") || undefined,
       city: formData.get("city") || undefined,
+      postcode: formData.get("postcode") || undefined,
       companyName: formData.get("companyName") || undefined,
       companySize: formData.get("companySize") || undefined,
       website: formData.get("website") || undefined,
@@ -56,13 +59,21 @@ export async function updateProfile(formData: FormData): Promise<void> {
     if (!parsed.success) throw new Error("Invalid profile data");
 
     const d = parsed.data;
+    const geo = await geocodeLocation({
+      postcode: d.postcode,
+      city: d.city,
+      country: d.country,
+    });
     await prisma.user.update({
       where: { id: user.id },
       data: {
         firstName: d.firstName,
         lastName: d.lastName,
-        country: d.country,
-        city: d.city,
+        country: geo?.country ?? d.country,
+        city: geo?.city ?? d.city,
+        postcode: d.postcode,
+        latitude: geo?.latitude,
+        longitude: geo?.longitude,
         clientProfile: {
           upsert: {
             create: {
@@ -88,6 +99,7 @@ export async function updateProfile(formData: FormData): Promise<void> {
       lastName: formData.get("lastName"),
       country: formData.get("country") || undefined,
       city: formData.get("city") || undefined,
+      postcode: formData.get("postcode") || undefined,
       headline: formData.get("headline") || undefined,
       bio: formData.get("bio") || undefined,
       hourlyRate: formData.get("hourlyRate") || undefined,
@@ -97,6 +109,11 @@ export async function updateProfile(formData: FormData): Promise<void> {
     if (!parsed.success) throw new Error("Invalid profile data");
 
     const d = parsed.data;
+    const geo = await geocodeLocation({
+      postcode: d.postcode,
+      city: d.city,
+      country: d.country,
+    });
     const profile = await prisma.talentProfile.upsert({
       where: { userId: user.id },
       create: {
@@ -132,8 +149,11 @@ export async function updateProfile(formData: FormData): Promise<void> {
       data: {
         firstName: d.firstName,
         lastName: d.lastName,
-        country: d.country,
-        city: d.city,
+        country: geo?.country ?? d.country,
+        city: geo?.city ?? d.city,
+        postcode: d.postcode,
+        latitude: geo?.latitude,
+        longitude: geo?.longitude,
       },
     });
   }

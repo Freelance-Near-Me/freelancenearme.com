@@ -18,10 +18,12 @@ export function MessagePanel({
   threadId,
   messages,
   currentUserId,
+  onSent,
 }: {
   threadId: string;
   messages: Message[];
   currentUserId: string;
+  onSent?: () => void | Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
 
@@ -29,6 +31,7 @@ export function MessagePanel({
     setError(null);
     try {
       await sendMessage(formData);
+      await onSent?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to send");
     }

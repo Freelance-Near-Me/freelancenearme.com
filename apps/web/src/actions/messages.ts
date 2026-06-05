@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { logContractActivity } from "@/lib/contract-activity";
 import { pushNotification } from "@/lib/in-app-notify";
+import { notifyNewMessage } from "@/lib/notifications";
 
 export async function getOrCreateThread(jobId: string, talentId: string) {
   const user = await requireUser();
@@ -63,6 +64,9 @@ export async function sendMessage(formData: FormData): Promise<void> {
     },
   });
 
+  const recipientId =
+    user.id === thread.clientId ? thread.talentId : thread.clientId;
+
   const contract = await prisma.contract.findFirst({
     where: {
       jobId: thread.jobId,
@@ -70,9 +74,13 @@ export async function sendMessage(formData: FormData): Promise<void> {
       status: ContractStatus.ACTIVE,
     },
   });
+
+  const job = await prisma.job.findUnique({
+    where: { id: thread.jobId },
+    select: { slug: true, title: true },
+  });
+
   if (contract) {
-    const recipientId =
-      user.id === contract.clientId ? contract.talentId : contract.clientId;
     await logContractActivity({
       contractId: contract.id,
       actorId: user.id,
@@ -85,15 +93,44 @@ export async function sendMessage(formData: FormData): Promise<void> {
       type: NotificationType.MESSAGE,
       title: "New message on contract",
       body: parsed.data.body.trim().slice(0, 120),
-      href: `/contracts/${contract.id}`,
+      href: `/inbox/${thread.id}`,
     });
+  } else {
+    await pushNotification({
+      userId: recipientId,
+      type: NotificationType.MESSAGE,
+      title: "New message",
+      body: parsed.data.body.trim().slice(0, 120),
+      href: `/inbox/${thread.id}`,
+    });
+    if (job) {
+      const recipient = await prisma.user.findUnique({
+        where: { id: recipientId },
+        select: { email: true },
+      });
+      if (recipient?.email) {
+        await notifyNewMessage({
+          recipientEmail: recipient.email,
+          jobTitle: job.title,
+          preview: parsed.data.body.trim().slice(0, 120),
+          threadId: thread.id,
+        });
+      }
+    }
   }
 
-  const job = await prisma.job.findUnique({
+  await prisma.messageThread.update({
+    where: { id: thread.id },
+    data: { updatedAt: new Date() },
+  });
+
+  const jobForRevalidate = await prisma.job.findUnique({
     where: { id: thread.jobId },
     select: { slug: true },
   });
-  if (job) {
-    revalidatePath(`/jobs/${job.slug}/messages/${thread.talentId}`);
+  if (jobForRevalidate) {
+    revalidatePath(`/jobs/${jobForRevalidate.slug}/messages/${thread.talentId}`);
   }
+  revalidatePath("/inbox");
+  revalidatePath(`/inbox/${thread.id}`);
 }

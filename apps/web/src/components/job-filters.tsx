@@ -67,6 +67,18 @@ export async function JobFilters({ searchParams }: JobFiltersProps) {
           <span className="font-medium text-slate-700">Max budget ($)</span>
           <Input name="maxBudget" type="number" min={0} defaultValue={sp.maxBudget} className="mt-1 bg-white" />
         </label>
+
+        <label className="block text-sm">
+          <span className="font-medium text-slate-700">Near postcode</span>
+          <Input name="nearPostcode" defaultValue={sp.nearPostcode} placeholder="e.g. M1 1AA" className="mt-1 bg-white" />
+        </label>
+
+        <FilterSelect name="radiusMiles" label="Radius" defaultValue={sp.radiusMiles}>
+          <option value="">Any distance</option>
+          <option value="10">Within 10 miles</option>
+          <option value="25">Within 25 miles</option>
+          <option value="50">Within 50 miles</option>
+        </FilterSelect>
       </div>
 
       <div className="flex flex-wrap items-center gap-4 text-sm">

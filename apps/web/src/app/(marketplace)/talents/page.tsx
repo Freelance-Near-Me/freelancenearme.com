@@ -17,6 +17,8 @@ export default async function TalentsPage({
     availability: sp.availability,
     minRate: sp.minRate ? Number(sp.minRate) : undefined,
     maxRate: sp.maxRate ? Number(sp.maxRate) : undefined,
+    nearPostcode: sp.nearPostcode,
+    radiusMiles: sp.radiusMiles ? Number(sp.radiusMiles) : undefined,
   });
 
   return (
@@ -58,6 +60,9 @@ export default async function TalentsPage({
                 skills={t.talentProfile?.skills}
                 averageRating={averageRating}
                 reviewCount={reviewCount}
+                city={t.city}
+                postcode={t.postcode}
+                distanceMiles={t.distanceMiles}
               />
             );
           })}

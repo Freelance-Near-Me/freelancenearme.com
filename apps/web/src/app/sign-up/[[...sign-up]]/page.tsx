@@ -2,7 +2,14 @@ import { SignUp } from "@clerk/nextjs";
 import { SetupNotice } from "@/components/setup-notice";
 import { isClerkConfigured } from "@/lib/env";
 
-export default function SignUpPage() {
+export default async function SignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>;
+}) {
+  const { role } = await searchParams;
+  const onboardingUrl =
+    role === "client" || role === "talent" ? `/onboarding?role=${role}` : "/onboarding";
   if (!isClerkConfigured()) {
     return (
       <SetupNotice title="Sign-up is not configured">
@@ -17,7 +24,7 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-12">
-      <SignUp forceRedirectUrl="/onboarding" signInForceRedirectUrl="/dashboard" />
+      <SignUp forceRedirectUrl={onboardingUrl} signInForceRedirectUrl="/dashboard" />
     </div>
   );
 }

@@ -30,8 +30,9 @@ export default async function ProfilePage() {
           <Field label="First name" name="firstName" defaultValue={profile.firstName} required />
           <Field label="Last name" name="lastName" defaultValue={profile.lastName} required />
         </div>
-        <Field label="Country" name="country" defaultValue={profile.country ?? ""} />
+        <Field label="Postcode" name="postcode" defaultValue={profile.postcode ?? ""} placeholder="e.g. M1 1AA" />
         <Field label="City" name="city" defaultValue={profile.city ?? ""} />
+        <Field label="Country" name="country" defaultValue={profile.country ?? "United Kingdom"} />
 
         {profile.role === UserRole.CLIENT && profile.clientProfile && (
           <>

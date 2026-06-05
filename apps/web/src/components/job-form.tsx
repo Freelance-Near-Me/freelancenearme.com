@@ -19,6 +19,7 @@ type JobFormProps = {
     experienceLevel?: string;
     country?: string;
     city?: string;
+    postcode?: string;
     categoryId?: string;
     featured?: boolean;
     urgent?: boolean;
@@ -88,14 +89,18 @@ export function JobForm({
         <Select name="environment" label="Environment" options={["REMOTE", "ONSITE", "HYBRID"]} defaultValue={d.environment} />
         <Select name="experienceLevel" label="Experience" options={["ENTRY", "INTERMEDIATE", "EXPERT"]} defaultValue={d.experienceLevel} />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <label className="block text-sm">
-          <span className="font-medium">Country</span>
-          <input name="country" defaultValue={d.country} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+          <span className="font-medium">Postcode</span>
+          <input name="postcode" defaultValue={d.postcode} placeholder="e.g. M1 1AA" className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
         </label>
         <label className="block text-sm">
           <span className="font-medium">City</span>
           <input name="city" defaultValue={d.city} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+        </label>
+        <label className="block text-sm">
+          <span className="font-medium">Country</span>
+          <input name="country" defaultValue={d.country} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
         </label>
       </div>
       {categories.length > 0 && (

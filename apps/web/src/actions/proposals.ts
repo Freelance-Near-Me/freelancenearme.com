@@ -99,3 +99,27 @@ export async function getMyProposals() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getReceivedProposals() {
+  const user = await requireRole(UserRole.CLIENT);
+  return prisma.proposal.findMany({
+    where: {
+      job: { posterId: user.id },
+      status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.SHORTLISTED] },
+    },
+    include: {
+      job: { select: { slug: true, title: true } },
+      talent: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          username: true,
+          talentProfile: { select: { headline: true, hourlyRate: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+}

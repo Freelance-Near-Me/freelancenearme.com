@@ -28,8 +28,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done
 - [x] Production build verified (`npm run build -w web`)
 - [ ] Link Vercel project + Neon (`vercel integration add neon`)
 - [x] Clerk webhook route (`/api/webhooks/clerk` + `CLERK_WEBHOOK_SECRET`)
-- [ ] Configure Clerk in Vercel (`NEXT_PUBLIC_CLERK_*`, webhook URL)
-- [ ] Run first migration on Neon staging (`npm run db:migrate`)
+- [x] Configure Clerk in Vercel (`NEXT_PUBLIC_CLERK_*`, webhook URL)
+- [x] Run first migration on Neon staging (`npm run db:migrate:deploy`)
 - [ ] Rotate legacy PHP DB credentials (security)
 
 ## Phase 1 — Core marketplace loop (current focus)

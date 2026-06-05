@@ -67,8 +67,11 @@ async function main() {
       firstName: "Alex",
       lastName: "Morgan",
       role: UserRole.CLIENT,
-      country: "US",
-      city: "Austin",
+      country: "United Kingdom",
+      city: "Manchester",
+      postcode: "M1 1AA",
+      latitude: 53.4794892,
+      longitude: -2.2451148,
       clientProfile: {
         create: {
           companyName: "Acme Corp",
@@ -90,8 +93,11 @@ async function main() {
       firstName: "Sarah",
       lastName: "Chen",
       role: UserRole.TALENT,
-      country: "US",
-      city: "San Francisco",
+      country: "United Kingdom",
+      city: "Salford",
+      postcode: "M3 4FP",
+      latitude: 53.4877462,
+      longitude: -2.2891921,
       talentProfile: {
         create: {
           headline: "Full-stack developer · React & Node",
@@ -166,10 +172,15 @@ async function main() {
         description: j.description,
         status: JobStatus.OPEN,
         billingMode: j.billingMode,
-        environment: WorkEnvironment.REMOTE,
+        environment: j.title.includes("SEO") ? WorkEnvironment.HYBRID : WorkEnvironment.ONSITE,
         experienceLevel: ExperienceLevel.INTERMEDIATE,
         budgetMin: j.budgetMin,
         budgetMax: j.budgetMax,
+        country: "United Kingdom",
+        city: "Manchester",
+        postcode: "M1 1AA",
+        latitude: 53.4794892,
+        longitude: -2.2451148,
         featured: j.featured,
         urgent: j.urgent,
         categoryId: j.categoryId,
@@ -231,7 +242,8 @@ async function main() {
   }
 
   console.log("Seed complete.");
-  console.log("Demo users (map to Clerk in dev):");
+  console.log("Demo users are Prisma-only. Create real accounts via Clerk sign-up in production.");
+  console.log("Dev bypass users:");
   console.log("  Client:", client.email);
   console.log("  Talent:", talent.email);
 }

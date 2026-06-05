@@ -4,6 +4,7 @@ import { UserRole } from "@fnm/database";
 import { prisma } from "@fnm/database";
 import { getCurrentUser } from "@/lib/auth";
 import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
+import { getUnreadMessageCount } from "@/actions/inbox";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,9 @@ function NotificationBadge({ count }: { count: number }) {
 export async function SiteHeader() {
   const hasClerk = isClerkConfigured();
   const user = isDatabaseConfigured() ? await getCurrentUser() : null;
-  const unread = user ? await unreadCount(user.id) : 0;
+  const [unread, unreadMessages] = user
+    ? await Promise.all([unreadCount(user.id), getUnreadMessageCount(user.id)])
+    : [0, 0];
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
@@ -68,6 +71,13 @@ export async function SiteHeader() {
                 </Link>
               </Show>
               <Show when="signed-in">
+                <Link
+                  href={routes.inbox}
+                  className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"
+                >
+                  Inbox
+                  <NotificationBadge count={unreadMessages} />
+                </Link>
                 <Link
                   href={routes.notifications}
                   className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"

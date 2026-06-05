@@ -2,6 +2,7 @@
 
 import { prisma, UserRole } from "@fnm/database";
 import { safeDbQuery } from "@/lib/db-safe";
+import { geocodeLocation, distanceMiles } from "@/lib/geocode";
 
 export type TalentFilters = {
   q?: string;
@@ -9,12 +10,14 @@ export type TalentFilters = {
   availability?: string;
   minRate?: number;
   maxRate?: number;
+  nearPostcode?: string;
+  radiusMiles?: number;
 };
 
 export async function listTalents(filters: TalentFilters = {}) {
   const { q, skill, availability, minRate, maxRate } = filters;
 
-  return safeDbQuery(
+  const talents = await safeDbQuery(
     () =>
       prisma.user.findMany({
         where: {
@@ -60,11 +63,32 @@ export async function listTalents(filters: TalentFilters = {}) {
           },
           reviewsReceived: { select: { rating: true } },
         },
-        take: 48,
+        take: 100,
         orderBy: { createdAt: "desc" },
       }),
     []
   );
+
+  if (!filters.nearPostcode || !filters.radiusMiles) {
+    return talents.map((t) => ({ ...t, distanceMiles: undefined as number | undefined }));
+  }
+
+  const origin = await geocodeLocation({ postcode: filters.nearPostcode, country: "United Kingdom" });
+  if (!origin) {
+    return talents.map((t) => ({ ...t, distanceMiles: undefined as number | undefined }));
+  }
+
+  return talents
+    .filter((t) => t.latitude != null && t.longitude != null)
+    .map((t) => ({
+      ...t,
+      distanceMiles: distanceMiles(
+        { latitude: origin.latitude, longitude: origin.longitude },
+        { latitude: t.latitude!, longitude: t.longitude! }
+      ),
+    }))
+    .filter((t) => t.distanceMiles <= filters.radiusMiles!)
+    .sort((a, b) => a.distanceMiles - b.distanceMiles);
 }
 
 export async function getTalentsBySkillSlug(skillSlug: string) {

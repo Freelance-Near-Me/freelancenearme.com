@@ -53,6 +53,12 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
         <span className="capitalize">{job.environment.toLowerCase()}</span>
         <span>·</span>
         <span className="capitalize">{job.experienceLevel.toLowerCase()}</span>
+        {(job.postcode || job.city) && (
+          <>
+            <span>·</span>
+            <span>{[job.postcode, job.city, job.country].filter(Boolean).join(", ")}</span>
+          </>
+        )}
       </div>
 
       <p className="mt-8 whitespace-pre-wrap leading-relaxed text-slate-700">{job.description}</p>

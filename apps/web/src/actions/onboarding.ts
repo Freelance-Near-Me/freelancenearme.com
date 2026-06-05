@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { syncUserFromClerk } from "@/lib/auth";
 import { isDevAuthBypass } from "@/lib/env";
+import { geocodeLocation } from "@/lib/geocode";
 
 const schema = z.object({
   role: z.enum(["client", "talent"]),
@@ -14,6 +15,7 @@ const schema = z.object({
   username: z.string().min(4).max(30).regex(/^[a-z0-9._-]+$/i),
   country: z.string().optional(),
   city: z.string().optional(),
+  postcode: z.string().optional(),
   headline: z.string().optional(),
   hourlyRate: z.coerce.number().optional(),
   companyName: z.string().optional(),
@@ -27,6 +29,7 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
     username: formData.get("username"),
     country: formData.get("country") || undefined,
     city: formData.get("city") || undefined,
+    postcode: formData.get("postcode") || undefined,
     headline: formData.get("headline") || undefined,
     hourlyRate: formData.get("hourlyRate") || undefined,
     companyName: formData.get("companyName") || undefined,
@@ -38,6 +41,11 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
 
   const data = parsed.data;
   const dbRole = data.role === "client" ? UserRole.CLIENT : UserRole.TALENT;
+  const geo = await geocodeLocation({
+    postcode: data.postcode,
+    city: data.city,
+    country: data.country,
+  });
 
   if (isDevAuthBypass()) {
     redirect("/dashboard");
@@ -60,8 +68,11 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
       firstName: data.firstName,
       lastName: data.lastName,
       role: dbRole,
-      country: data.country,
-      city: data.city,
+      country: geo?.country ?? data.country,
+      city: geo?.city ?? data.city,
+      postcode: data.postcode,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude,
       ...(dbRole === UserRole.CLIENT
         ? { clientProfile: { create: { companyName: data.companyName } } }
         : {
@@ -78,8 +89,11 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
       firstName: data.firstName,
       lastName: data.lastName,
       role: dbRole,
-      country: data.country,
-      city: data.city,
+      country: geo?.country ?? data.country,
+      city: geo?.city ?? data.city,
+      postcode: data.postcode,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude,
     },
   });
 

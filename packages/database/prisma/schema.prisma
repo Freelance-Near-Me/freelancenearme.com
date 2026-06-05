@@ -86,6 +86,18 @@ enum NotificationType {
   SYSTEM
 }
 
+enum PaymentTransactionType {
+  FUND
+  RELEASE
+  REFUND
+}
+
+enum PaymentTransactionStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
 model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
@@ -97,24 +109,32 @@ model User {
   avatarUrl          String?
   country            String?
   city               String?
+  postcode           String?
+  latitude           Float?
+  longitude          Float?
   stripeCustomerId   String?  @unique
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  clientProfile    ClientProfile?
-  talentProfile    TalentProfile?
-  jobsPosted       Job[]            @relation("JobPoster")
-  proposals        Proposal[]
-  contractsAsClient Contract[]      @relation("ContractClient")
-  contractsAsTalent Contract[]      @relation("ContractTalent")
-  messagesSent      Message[]
-  deliverables      Deliverable[]
-  activities        ContractActivity[]
-  notifications     Notification[]
-  reviewsGiven      Review[]         @relation("ReviewsGiven")
-  reviewsReceived   Review[]         @relation("ReviewsReceived")
+  clientProfile       ClientProfile?
+  talentProfile       TalentProfile?
+  jobsPosted          Job[]                 @relation("JobPoster")
+  proposals           Proposal[]
+  contractsAsClient   Contract[]            @relation("ContractClient")
+  contractsAsTalent   Contract[]            @relation("ContractTalent")
+  messagesSent        Message[]
+  deliverables        Deliverable[]
+  activities          ContractActivity[]
+  notifications       Notification[]
+  reviewsGiven        Review[]              @relation("ReviewsGiven")
+  reviewsReceived     Review[]              @relation("ReviewsReceived")
+  threadReads         ThreadRead[]
+  savedSearches       SavedSearch[]
+  paymentsAsPayer     PaymentTransaction[]  @relation("PaymentsPayer")
+  paymentsAsPayee     PaymentTransaction[]  @relation("PaymentsPayee")
 
   @@index([role])
+  @@index([latitude, longitude])
 }
 
 model Category {
@@ -127,8 +147,9 @@ model Category {
 
   parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children Category[] @relation("CategoryTree")
-  jobs     Job[]
-  skills   Skill[]
+  jobs            Job[]
+  skills          Skill[]
+  waitlistEntries WaitlistEntry[]
 
   @@index([parentId])
 }
@@ -215,6 +236,9 @@ model Job {
   budgetMax       Decimal         @db.Decimal(12, 2)
   country         String?
   city            String?
+  postcode        String?
+  latitude        Float?
+  longitude       Float?
   categoryId      String?
   featured        Boolean         @default(false)
   urgent          Boolean         @default(false)
@@ -232,6 +256,7 @@ model Job {
   @@index([status, publishedAt])
   @@index([posterId])
   @@index([categoryId])
+  @@index([latitude, longitude])
 }
 
 model JobSkill {
@@ -280,10 +305,12 @@ model Contract {
   proposal Proposal @relation(fields: [proposalId], references: [id])
   client     User        @relation("ContractClient", fields: [clientId], references: [id])
   talent     User        @relation("ContractTalent", fields: [talentId], references: [id])
-  milestones   Milestone[]
-  activities   ContractActivity[]
-  deliverables Deliverable[]
-  review       Review?
+  milestones        Milestone[]
+  activities        ContractActivity[]
+  deliverables      Deliverable[]
+  review            Review?
+  messageThreads    MessageThread[]
+  paymentTransactions PaymentTransaction[]
 
   @@index([clientId])
   @@index([talentId])
@@ -322,8 +349,9 @@ model Milestone {
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
 
-  contract      Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
-  deliverables  Deliverable[]
+  contract            Contract             @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  deliverables        Deliverable[]
+  paymentTransactions PaymentTransaction[]
 
   @@index([contractId])
 }
@@ -379,18 +407,35 @@ model Notification {
 }
 
 model MessageThread {
-  id        String   @id @default(cuid())
-  jobId     String
-  clientId  String
-  talentId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  jobId      String
+  clientId   String
+  talentId   String
+  contractId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  job      Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  messages Message[]
+  job         Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  contract    Contract?    @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  messages    Message[]
+  threadReads ThreadRead[]
 
   @@unique([jobId, talentId])
   @@index([jobId])
+  @@index([contractId])
+}
+
+model ThreadRead {
+  id         String   @id @default(cuid())
+  threadId   String
+  userId     String
+  lastReadAt DateTime @default(now())
+
+  thread MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, userId])
+  @@index([userId])
 }
 
 model Message {
@@ -404,4 +449,56 @@ model Message {
   sender User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([threadId])
+}
+
+model PaymentTransaction {
+  id                    String                   @id @default(cuid())
+  contractId            String
+  milestoneId           String?
+  payerId               String
+  payeeId               String
+  type                  PaymentTransactionType
+  status                PaymentTransactionStatus @default(SUCCEEDED)
+  amount                Decimal                  @db.Decimal(12, 2)
+  platformFee           Decimal?                 @db.Decimal(12, 2)
+  netAmount             Decimal?                 @db.Decimal(12, 2)
+  currency              String                   @default("gbp")
+  stripePaymentIntentId String?
+  stripeTransferId      String?
+  receiptUrl            String?
+  createdAt             DateTime                 @default(now())
+
+  contract  Contract   @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  payer     User       @relation("PaymentsPayer", fields: [payerId], references: [id], onDelete: Cascade)
+  payee     User       @relation("PaymentsPayee", fields: [payeeId], references: [id], onDelete: Cascade)
+
+  @@index([contractId, createdAt])
+  @@index([payerId])
+  @@index([payeeId])
+}
+
+model WaitlistEntry {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  role       UserRole?
+  postcode   String?
+  categoryId String?
+  createdAt  DateTime  @default(now())
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([postcode])
+}
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  label     String
+  filters   Json
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

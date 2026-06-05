@@ -1,7 +1,14 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { prisma, MilestoneStatus, ActivityType, NotificationType } from "@fnm/database";
+import {
+  prisma,
+  MilestoneStatus,
+  ActivityType,
+  NotificationType,
+  PaymentTransactionType,
+} from "@fnm/database";
+import { recordPaymentTransaction } from "@/lib/payment-ledger";
 import { logContractActivity } from "@/lib/contract-activity";
 import { pushNotification } from "@/lib/in-app-notify";
 import { notifyMilestoneFunded } from "@/lib/notifications";
@@ -60,8 +67,21 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       fundedAt: new Date(),
     },
     include: {
-      contract: { include: { talent: true } },
+      contract: { include: { client: true, talent: true } },
     },
+  });
+
+  await recordPaymentTransaction({
+    contractId: milestone.contractId,
+    milestoneId: milestone.id,
+    payerId: milestone.contract.clientId,
+    payeeId: milestone.contract.talentId,
+    type: PaymentTransactionType.FUND,
+    amount: Number(milestone.amount),
+    stripePaymentIntentId: paymentIntentId ?? undefined,
+    receiptUrl: paymentIntentId
+      ? `https://dashboard.stripe.com/payments/${paymentIntentId}`
+      : undefined,
   });
 
   await notifyMilestoneFunded({

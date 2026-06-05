@@ -14,6 +14,7 @@
     "db:generate": "npm run db:generate -w @fnm/database",
     "db:push": "npm run db:push -w @fnm/database",
     "db:migrate": "npm run db:migrate -w @fnm/database",
+    "db:migrate:deploy": "npm run db:migrate:deploy -w @fnm/database",
     "db:seed": "npm run db:seed -w @fnm/database",
     "db:studio": "npm run db:studio -w @fnm/database",
     "setup:dev": "bash scripts/setup-dev.sh",

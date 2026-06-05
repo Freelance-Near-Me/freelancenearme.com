@@ -4,6 +4,7 @@ import { StarRating } from "@/components/star-rating";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Card, CardBody } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format";
+import { formatDistanceMiles } from "@/lib/geocode";
 import { routes } from "@/lib/routes";
 
 type TalentCardProps = {
@@ -17,6 +18,9 @@ type TalentCardProps = {
   skills?: { skill: { name: string; slug: string } }[];
   averageRating?: number;
   reviewCount?: number;
+  city?: string | null;
+  postcode?: string | null;
+  distanceMiles?: number;
 };
 
 export function TalentCard({
@@ -30,7 +34,11 @@ export function TalentCard({
   skills = [],
   averageRating = 0,
   reviewCount = 0,
+  city,
+  postcode,
+  distanceMiles,
 }: TalentCardProps) {
+  const location = [postcode, city].filter(Boolean).join(", ");
   return (
     <Card className="transition hover:border-blue-200 hover:shadow-md">
       <CardBody>
@@ -60,6 +68,13 @@ export function TalentCard({
               {averageRating.toFixed(1)} ({reviewCount})
             </span>
           </div>
+        )}
+
+        {location && (
+          <p className="mt-2 text-xs text-slate-500">
+            {location}
+            {distanceMiles != null && ` · ${formatDistanceMiles(distanceMiles)}`}
+          </p>
         )}
 
         {headline && <p className="mt-2 line-clamp-2 text-sm text-slate-700">{headline}</p>}

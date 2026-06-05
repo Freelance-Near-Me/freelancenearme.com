@@ -177,11 +177,14 @@ export async function completeContract(contractId: string): Promise<void> {
   revalidatePath("/dashboard");
 }
 
-export async function getMyContracts() {
+export async function getMyContracts(activeOnly = false) {
   const user = await requireUser();
   return prisma.contract.findMany({
     where: {
       OR: [{ clientId: user.id }, { talentId: user.id }],
+      ...(activeOnly
+        ? { status: { in: [ContractStatus.ACTIVE, ContractStatus.PENDING_ACCEPTANCE] } }
+        : {}),
     },
     include: { job: { select: { slug: true, title: true } } },
     orderBy: { createdAt: "desc" },

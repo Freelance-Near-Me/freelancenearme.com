@@ -14,6 +14,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole, requireUser } from "@/lib/auth";
 import { safeDbQuery } from "@/lib/db-safe";
+import { geocodeLocation, distanceMiles } from "@/lib/geocode";
 import { uniqueSlug } from "@/lib/slug";
 
 const jobSchema = z.object({
@@ -26,6 +27,7 @@ const jobSchema = z.object({
   experienceLevel: z.enum(["ENTRY", "INTERMEDIATE", "EXPERT"]),
   country: z.string().optional(),
   city: z.string().optional(),
+  postcode: z.string().optional(),
   skillIds: z.array(z.string()).optional(),
   categoryId: z.string().optional(),
   featured: z.coerce.boolean().optional(),
@@ -43,6 +45,8 @@ export type JobFilters = {
   maxBudget?: number;
   featured?: boolean;
   urgent?: boolean;
+  nearPostcode?: string;
+  radiusMiles?: number;
 };
 
 function parseJobForm(formData: FormData) {
@@ -57,6 +61,7 @@ function parseJobForm(formData: FormData) {
     experienceLevel: formData.get("experienceLevel"),
     country: formData.get("country") || undefined,
     city: formData.get("city") || undefined,
+    postcode: formData.get("postcode") || undefined,
     skillIds,
     categoryId: formData.get("categoryId") || undefined,
     featured: formData.get("featured") === "on",
@@ -83,6 +88,11 @@ export async function createJob(formData: FormData) {
 
   const publish = formData.get("publish") === "true";
   const slug = uniqueSlug(d.title, user.id);
+  const geo = await geocodeLocation({
+    postcode: d.postcode,
+    city: d.city ?? user.city,
+    country: d.country ?? user.country,
+  });
 
   const job = await prisma.job.create({
     data: {
@@ -96,8 +106,11 @@ export async function createJob(formData: FormData) {
       experienceLevel: d.experienceLevel as ExperienceLevel,
       budgetMin: d.budgetMin,
       budgetMax: d.budgetMax,
-      country: d.country ?? user.country,
-      city: d.city ?? user.city,
+      country: geo?.country ?? d.country ?? user.country,
+      city: geo?.city ?? d.city ?? user.city,
+      postcode: d.postcode,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude,
       categoryId: d.categoryId || null,
       featured: d.featured ?? false,
       urgent: d.urgent ?? false,
@@ -121,6 +134,11 @@ export async function updateJob(slug: string, formData: FormData): Promise<void>
   if (d.budgetMax < d.budgetMin) throw new Error("Max budget must be ≥ min budget");
 
   const publish = formData.get("publish") === "true";
+  const geo = await geocodeLocation({
+    postcode: d.postcode,
+    city: d.city,
+    country: d.country,
+  });
 
   await prisma.job.update({
     where: { id: job.id },
@@ -132,8 +150,11 @@ export async function updateJob(slug: string, formData: FormData): Promise<void>
       experienceLevel: d.experienceLevel as ExperienceLevel,
       budgetMin: d.budgetMin,
       budgetMax: d.budgetMax,
-      country: d.country,
-      city: d.city,
+      country: geo?.country ?? d.country,
+      city: geo?.city ?? d.city,
+      postcode: d.postcode,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude,
       categoryId: d.categoryId || null,
       featured: d.featured ?? job.featured,
       urgent: d.urgent ?? job.urgent,
@@ -189,10 +210,12 @@ function buildJobWhere(filters: JobFilters = {}): Prisma.JobWhereInput {
   };
 }
 
+export type JobListItem = Awaited<ReturnType<typeof listOpenJobs>>[number];
+
 export async function listOpenJobs(filters: JobFilters | string = {}) {
   const resolved: JobFilters = typeof filters === "string" ? { q: filters } : filters;
 
-  return safeDbQuery(
+  const jobs = await safeDbQuery(
     () =>
       prisma.job.findMany({
         where: buildJobWhere(resolved),
@@ -205,10 +228,33 @@ export async function listOpenJobs(filters: JobFilters | string = {}) {
           _count: { select: { proposals: true } },
         },
         orderBy: [{ featured: "desc" }, { urgent: "desc" }, { publishedAt: "desc" }],
-        take: 50,
+        take: 100,
       }),
     []
   );
+
+  if (!resolved.nearPostcode || !resolved.radiusMiles) {
+    return jobs.map((job) => ({ ...job, distanceMiles: undefined as number | undefined }));
+  }
+
+  const origin = await geocodeLocation({ postcode: resolved.nearPostcode, country: "United Kingdom" });
+  if (!origin) {
+    return jobs.map((job) => ({ ...job, distanceMiles: undefined as number | undefined }));
+  }
+
+  const withDistance = jobs
+    .filter((job) => job.latitude != null && job.longitude != null)
+    .map((job) => ({
+      ...job,
+      distanceMiles: distanceMiles(
+        { latitude: origin.latitude, longitude: origin.longitude },
+        { latitude: job.latitude!, longitude: job.longitude! }
+      ),
+    }))
+    .filter((job) => job.distanceMiles <= resolved.radiusMiles!)
+    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+
+  return withDistance;
 }
 
 export async function getJobBySlug(slug: string) {

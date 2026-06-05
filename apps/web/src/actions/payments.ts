@@ -6,6 +6,7 @@ import {
   MilestoneStatus,
   ActivityType,
   NotificationType,
+  PaymentTransactionType,
 } from "@fnm/database";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
@@ -21,6 +22,7 @@ import { logContractActivity } from "@/lib/contract-activity";
 import { pushNotification } from "@/lib/in-app-notify";
 import { notifyMilestonePaid } from "@/lib/notifications";
 import { formatMoney } from "@/lib/utils";
+import { recordPaymentTransaction } from "@/lib/payment-ledger";
 import { revalidatePath } from "next/cache";
 
 export async function createMilestoneCheckout(milestoneId: string): Promise<void> {
@@ -139,6 +141,10 @@ export async function releaseMilestonePayment(milestoneId: string): Promise<void
     metadata: { milestoneId: milestone.id },
   });
 
+  const gross = Number(milestone.amount);
+  const platformFee = gross * (feePercent / 100);
+  const netAmount = transferAmount / 100;
+
   await prisma.milestone.update({
     where: { id: milestoneId },
     data: {
@@ -146,6 +152,19 @@ export async function releaseMilestonePayment(milestoneId: string): Promise<void
       stripeTransferId: transfer.id,
       paidAt: new Date(),
     },
+  });
+
+  await recordPaymentTransaction({
+    contractId: milestone.contractId,
+    milestoneId: milestone.id,
+    payerId: milestone.contract.clientId,
+    payeeId: milestone.contract.talentId,
+    type: PaymentTransactionType.RELEASE,
+    amount: Number(milestone.amount),
+    platformFee,
+    netAmount,
+    stripeTransferId: transfer.id,
+    receiptUrl: `https://dashboard.stripe.com/connect/transfers/${transfer.id}`,
   });
 
   await notifyMilestonePaid({

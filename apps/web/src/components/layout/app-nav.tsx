@@ -7,8 +7,10 @@ import { routes } from "@/lib/routes";
 
 const navItems = [
   { href: routes.dashboard, label: "Dashboard" },
+  { href: routes.inbox, label: "Inbox" },
   { href: routes.jobs, label: "Jobs" },
   { href: routes.notifications, label: "Notifications" },
+  { href: routes.transactions, label: "Transactions" },
   { href: routes.profile, label: "Profile" },
 ];
 
@@ -24,6 +26,8 @@ export function AppNav() {
         const active =
           pathname === item.href ||
           (item.href === routes.dashboard && pathname.startsWith("/contracts")) ||
+          (item.href === routes.inbox && pathname.startsWith("/inbox")) ||
+          (item.href === routes.transactions && pathname.startsWith("/settings/transactions")) ||
           (item.href === routes.jobs && pathname.startsWith("/jobs/post"));
         return (
           <Link

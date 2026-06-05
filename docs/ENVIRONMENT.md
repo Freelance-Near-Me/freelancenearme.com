@@ -15,8 +15,22 @@ Or manually:
 cp apps/web/.env.example apps/web/.env
 # Edit DATABASE_URL, then:
 echo "DATABASE_URL=\"<same-as-web>\"" > packages/database/.env
-npm install && npm run db:push && npm run db:seed && npm run dev
+npm install && npm run db:migrate && npm run db:seed && npm run dev
 ```
+
+### Schema migrations (production)
+
+Migrations live in `packages/database/prisma/migrations/`. Use migrations instead of `db:push` for production.
+
+```bash
+# Local: create and apply a new migration after schema changes
+cd packages/database && npx prisma migrate dev --name describe_change
+
+# Production / CI: apply pending migrations only (no prompts)
+npm run db:migrate:deploy
+```
+
+On Vercel, run `db:migrate:deploy` against Neon before or as part of deploy when the schema changes. The build already runs `db:generate`.
 
 ---
 
@@ -33,7 +47,7 @@ npm install && npm run db:push && npm run db:seed && npm run dev
 | `DEV_AUTH_USER` | Local only | Web | `client` (default) or `talent` when bypass on |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Prod | Web | Clerk frontend |
 | `CLERK_SECRET_KEY` | Prod | Web | Clerk server / middleware |
-| `CLERK_WEBHOOK_SECRET` | Prod | Web | Verify `/api/webhooks/clerk` |
+| `CLERK_WEBHOOK_SECRET` | Prod | Web | Verify `/api/webhooks/clerk` (user sync on sign-up) |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Prod | Web | Default `/sign-in` |
 | `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | Prod | Web | Default `/sign-up` |
 | `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL` | Prod | Web | Default `/dashboard` |
@@ -49,6 +63,10 @@ npm install && npm run db:push && npm run db:seed && npm run dev
 | `BLOB_READ_WRITE_TOKEN` | Optional | Web | Vercel Blob deliverable uploads |
 
 `NODE_ENV` is set automatically by Next.js / Vercel.
+
+**Clerk sign-up:** Use `/sign-up?role=client` or `/sign-up?role=talent` so onboarding pre-selects the correct role. Enable Google OAuth in the Clerk Dashboard for the production instance.
+
+**Geocoding:** UK postcodes are resolved via postcodes.io on save (no API key). City/country fall back to OpenStreetMap Nominatim.
 
 ---
 

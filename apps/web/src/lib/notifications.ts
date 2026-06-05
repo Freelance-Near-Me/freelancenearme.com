@@ -87,6 +87,28 @@ export async function notifyMilestoneFunded({
   });
 }
 
+export async function notifyNewMessage({
+  recipientEmail,
+  jobTitle,
+  preview,
+  threadId,
+}: {
+  recipientEmail: string;
+  jobTitle: string;
+  preview: string;
+  threadId: string;
+}) {
+  await sendEmail({
+    to: recipientEmail,
+    subject: `New message about "${jobTitle}"`,
+    html: emailLayout(
+      "New message",
+      `<p>You have a new message about <strong>${jobTitle}</strong>:</p><p>${preview}</p>`,
+      { label: "Open inbox", href: appUrl(`/inbox/${threadId}`) }
+    ),
+  });
+}
+
 export async function notifyMilestonePaid({
   talentEmail,
   milestoneTitle,

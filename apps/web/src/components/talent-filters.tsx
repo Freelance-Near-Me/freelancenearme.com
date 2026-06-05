@@ -58,6 +58,25 @@ export async function TalentFilters({ searchParams }: TalentFiltersProps) {
           <span className="font-medium text-slate-700">Max rate ($/hr)</span>
           <Input name="maxRate" type="number" min={0} defaultValue={sp.maxRate} className="mt-1 bg-white" />
         </label>
+
+        <label className="block text-sm">
+          <span className="font-medium text-slate-700">Near postcode</span>
+          <Input name="nearPostcode" defaultValue={sp.nearPostcode} placeholder="e.g. M1 1AA" className="mt-1 bg-white" />
+        </label>
+
+        <label className="block text-sm">
+          <span className="font-medium text-slate-700">Radius</span>
+          <select
+            name="radiusMiles"
+            defaultValue={sp.radiusMiles ?? ""}
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
+          >
+            <option value="">Any distance</option>
+            <option value="10">Within 10 miles</option>
+            <option value="25">Within 25 miles</option>
+            <option value="50">Within 50 miles</option>
+          </select>
+        </label>
       </div>
 
       <a href={routes.talents} className="text-sm text-blue-600 hover:underline">
