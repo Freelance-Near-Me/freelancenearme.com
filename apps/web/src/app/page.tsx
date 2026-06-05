@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { listOpenJobs } from "@/actions/jobs";
 import { JobCard } from "@/components/job-card";
+import { isDatabaseConfigured } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
 export default async function HomePage() {
   const jobs = await listOpenJobs();
+  const dbReady = isDatabaseConfigured();
 
   return (
     <div>
+      {!dbReady && (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-900">
+          Database is not connected. Set <code className="font-mono">DATABASE_URL</code> in your
+          environment (see docs/ENVIRONMENT.md).
+        </div>
+      )}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-600 to-slate-900 text-white">
         <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
           <p className="text-sm font-medium uppercase tracking-widest text-blue-100">

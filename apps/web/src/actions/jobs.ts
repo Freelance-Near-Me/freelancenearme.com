@@ -12,6 +12,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole, requireUser } from "@/lib/auth";
+import { isDatabaseConfigured } from "@/lib/env";
 import { uniqueSlug } from "@/lib/slug";
 
 const jobSchema = z.object({
@@ -137,6 +138,8 @@ export async function publishJob(slug: string): Promise<void> {
 }
 
 export async function listOpenJobs(query?: string) {
+  if (!isDatabaseConfigured()) return [];
+
   return prisma.job.findMany({
     where: {
       status: JobStatus.OPEN,

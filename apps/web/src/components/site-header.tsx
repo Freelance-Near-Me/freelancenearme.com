@@ -3,6 +3,7 @@ import { Show, UserButton } from "@clerk/nextjs";
 import { UserRole } from "@fnm/database";
 import { prisma } from "@fnm/database";
 import { getCurrentUser } from "@/lib/auth";
+import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,8 +28,8 @@ function NotificationBadge({ count }: { count: number }) {
 }
 
 export async function SiteHeader() {
-  const hasClerk = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  const user = await getCurrentUser();
+  const hasClerk = isClerkConfigured();
+  const user = isDatabaseConfigured() ? await getCurrentUser() : null;
   const unread = user ? await unreadCount(user.id) : 0;
 
   return (

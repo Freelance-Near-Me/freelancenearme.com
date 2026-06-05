@@ -1,6 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import type { PoolConfig } from "pg";
 import { PrismaClient } from "../generated/client";
+import { resolveDatabaseUrl } from "./database-url";
 
 function normalizeDatabaseUrl(raw: string): string {
   try {
@@ -20,8 +21,12 @@ function normalizeDatabaseUrl(raw: string): string {
 }
 
 function poolConfig(): PoolConfig {
-  const raw = process.env.DATABASE_URL;
-  if (!raw) throw new Error("DATABASE_URL is not set");
+  const raw = resolveDatabaseUrl();
+  if (!raw) {
+    throw new Error(
+      "Database URL is not set (DATABASE_URL, POSTGRES_PRISMA_URL, or POSTGRES_URL)"
+    );
+  }
   const connectionString = normalizeDatabaseUrl(raw);
   const url = new URL(connectionString.replace(/^postgresql:/, "postgres:"));
   const usesPooler = url.searchParams.get("pgbouncer") === "true";

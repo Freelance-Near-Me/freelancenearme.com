@@ -5,6 +5,7 @@ import { prisma, UserRole } from "@fnm/database";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { syncUserFromClerk } from "@/lib/auth";
+import { isDevAuthBypass } from "@/lib/env";
 
 const schema = z.object({
   role: z.enum(["client", "talent"]),
@@ -38,7 +39,7 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
   const data = parsed.data;
   const dbRole = data.role === "client" ? UserRole.CLIENT : UserRole.TALENT;
 
-  if (process.env.DEV_AUTH_BYPASS === "true") {
+  if (isDevAuthBypass()) {
     redirect("/dashboard");
   }
 
@@ -111,7 +112,7 @@ export async function completeOnboarding(formData: FormData): Promise<void> {
 }
 
 export async function ensureUser() {
-  if (process.env.DEV_AUTH_BYPASS === "true") {
+  if (isDevAuthBypass()) {
     return prisma.user.findFirst({ where: { clerkId: "seed_client_1" } });
   }
   let user = await syncUserFromClerk();

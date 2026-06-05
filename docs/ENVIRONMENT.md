@@ -25,6 +25,8 @@ npm install && npm run db:push && npm run db:seed && npm run dev
 | Variable | Required | Where | Purpose |
 |----------|----------|-------|---------|
 | `DATABASE_URL` | **Yes** | Web + database package | PostgreSQL (Neon, Docker, or Prisma dev) |
+| `POSTGRES_PRISMA_URL` | Neon on Vercel | Auto from Neon integration | Used if `DATABASE_URL` is unset (Prisma-optimized pooled URL) |
+| `POSTGRES_URL` | Neon on Vercel | Auto from Neon integration | Fallback pooled URL |
 | `NEXT_PUBLIC_APP_URL` | **Yes** (prod) | Web | Public site URL for redirects & links |
 | `DEV_AUTH_BYPASS` | Local only | Web | `true` = skip Clerk, use seed users |
 | `DEV_AUTH_USER` | Local only | Web | `client` (default) or `talent` when bypass on |
@@ -77,7 +79,8 @@ Set these in **Project → Settings → Environment Variables** (Production + Pr
 
 | Variable | Notes |
 |----------|--------|
-| `DATABASE_URL` | Neon pooled URL; also available at build time |
+| `DATABASE_URL` | Copy Neon **pooled** URL, or set `POSTGRES_PRISMA_URL` from the Vercel Neon integration |
+| `POSTGRES_PRISMA_URL` | Optional if Vercel Neon integration already injects it (app reads this automatically) |
 | `NEXT_PUBLIC_APP_URL` | e.g. `https://freelancenearme.com` |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | |
 | `CLERK_SECRET_KEY` | |
@@ -92,7 +95,17 @@ Set these in **Project → Settings → Environment Variables** (Production + Pr
 | `EMAIL_FROM` | Verified domain in Resend |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob store |
 
-**Do not** set `DEV_AUTH_BYPASS` on Vercel.
+**Do not** set `DEV_AUTH_BYPASS` on Vercel (it is ignored in production).
+
+**Minimum to avoid server errors on deploy:**
+
+| Variable | Required on Vercel |
+|----------|-------------------|
+| `DATABASE_URL` | **Yes** — Neon Postgres; run `npm run db:push` or `db:migrate` once |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` | **Yes** for auth (set both, not just one) |
+| `NEXT_PUBLIC_APP_URL` | **Yes** — your production URL |
+
+Check deployment health: `GET /api/health` → `{ database: "ok", clerk: "configured" }`.
 
 After first deploy, run migrations against production:
 

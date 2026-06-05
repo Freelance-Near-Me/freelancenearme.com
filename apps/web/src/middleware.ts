@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { isClerkConfigured, isDevAuthBypass } from "@/lib/env";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -14,11 +15,9 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)",
 ]);
 
-const hasClerk = Boolean(process.env.CLERK_SECRET_KEY);
-
-export default hasClerk
+export default isClerkConfigured()
   ? clerkMiddleware(async (auth, req) => {
-      if (process.env.DEV_AUTH_BYPASS === "true") return;
+      if (isDevAuthBypass()) return;
       if (!isPublicRoute(req)) await auth.protect();
     })
   : function middleware() {
