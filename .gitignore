@@ -26,3 +26,4 @@ npm-debug.log*
 
 # Legacy PHP runtime (keep tracked source; ignore uploads/cache if added later)
 # userfiles/
+.vercel
