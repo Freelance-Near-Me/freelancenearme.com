@@ -53,6 +53,17 @@ export function getClerkDiagnostics() {
   const hasServerOnlyPublishable =
     Boolean(process.env.CLERK_PUBLISHABLE_KEY?.trim()) &&
     !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim();
+  const hasSecretOnly =
+    Boolean(process.env.CLERK_SECRET_KEY?.trim()) && !getClerkPublishableKey();
+
+  let hint: string | undefined;
+  if (hasServerOnlyPublishable) {
+    hint =
+      "CLERK_PUBLISHABLE_KEY is set but NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required. Add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY with the same pk_ value in Vercel → Production, then redeploy.";
+  } else if (hasSecretOnly) {
+    hint =
+      "CLERK_SECRET_KEY is set but the publishable key is missing. In Clerk Dashboard → API Keys, copy the Publishable key (pk_...) into Vercel → Production as NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, then redeploy.";
+  }
 
   return {
     configured: isClerkConfigured(),
@@ -60,9 +71,7 @@ export function getClerkDiagnostics() {
     secretKeySet: Boolean(getClerkSecretKey()),
     keysFound,
     missing: getClerkMissingKeys(),
-    hint: hasServerOnlyPublishable
-      ? "CLERK_PUBLISHABLE_KEY is set but NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required for the browser. Add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY with the same pk_ value in Vercel → Production, then redeploy."
-      : undefined,
+    hint,
   };
 }
 
