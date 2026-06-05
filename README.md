@@ -94,10 +94,12 @@ See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for Clerk, Stripe, Resend, and Bl
 
 ## Deploy to Vercel
 
-1. Import repo · **Framework:** Next.js · **Root Directory:** `apps/web` (recommended)  
-2. Clear any **Output Directory** override (must not be `_site` from old Jekyll/GitHub Pages)  
-3. Environment variables — see [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) (Neon, Clerk, Stripe, Resend, Blob)  
-4. `npm run db:migrate` against production
+1. **Root Directory:** `apps/web` (required — see [docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md))  
+2. **Framework:** Next.js · **Output Directory:** leave empty (never `_site`)  
+3. Environment variables — [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)  
+4. `npm run db:migrate` against production  
+
+If the project root is the repo root (`.`), root `vercel.json` symlinks `apps/web/.next` for the builder.
 
 ## Product flows (implemented)
 
