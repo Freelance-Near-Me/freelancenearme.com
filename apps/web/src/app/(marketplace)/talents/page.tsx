@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { prisma } from "@fnm/database";
+import { safeDbQuery } from "@/lib/db-safe";
 import { formatMoney } from "@/lib/utils";
 
 export default async function TalentsPage() {
-  const talents = await prisma.user.findMany({
-    where: { role: "TALENT", talentProfile: { verified: true } },
-    include: {
-      talentProfile: { include: { skills: { include: { skill: true } } } },
-    },
-    take: 24,
-    orderBy: { createdAt: "desc" },
-  });
+  const talents = await safeDbQuery(
+    () =>
+      prisma.user.findMany({
+        where: { role: "TALENT", talentProfile: { verified: true } },
+        include: {
+          talentProfile: { include: { skills: { include: { skill: true } } } },
+        },
+        take: 24,
+        orderBy: { createdAt: "desc" },
+      }),
+    []
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">

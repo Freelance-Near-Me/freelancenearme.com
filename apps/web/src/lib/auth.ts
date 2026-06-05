@@ -10,21 +10,39 @@ export async function getCurrentUser(): Promise<User | null> {
   if (isDevAuthBypass()) {
     const clerkId =
       process.env.DEV_AUTH_USER === "talent" ? "seed_talent_1" : "seed_client_1";
-    return prisma.user.findUnique({ where: { clerkId } });
+    try {
+      return await prisma.user.findUnique({ where: { clerkId } });
+    } catch (error) {
+      console.error("[auth] dev bypass user lookup failed", error);
+      return null;
+    }
   }
 
   if (!isClerkConfigured()) return null;
 
-  const { userId } = await auth();
-  if (!userId) return null;
+  try {
+    const { userId } = await auth();
+    if (!userId) return null;
 
-  const existing = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (existing) return existing;
+    const existing = await prisma.user.findUnique({ where: { clerkId: userId } });
+    if (existing) return existing;
 
-  return syncUserFromClerk();
+    return syncUserFromClerk();
+  } catch (error) {
+    console.error("[auth] Clerk session lookup failed", error);
+    return null;
+  }
 }
 
 export async function requireUser() {
+  if (!isClerkConfigured()) {
+    throw new Error(
+      "Authentication is not configured. Set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY on the server."
+    );
+  }
+  if (!isDatabaseConfigured()) {
+    throw new Error("DATABASE_URL (or POSTGRES_PRISMA_URL) is not configured on the server.");
+  }
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
   return user;

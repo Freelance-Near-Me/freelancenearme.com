@@ -15,7 +15,11 @@ const publicLinks = [
 ];
 
 async function unreadCount(userId: string) {
-  return prisma.notification.count({ where: { userId, read: false } });
+  try {
+    return await prisma.notification.count({ where: { userId, read: false } });
+  } catch {
+    return 0;
+  }
 }
 
 function NotificationBadge({ count }: { count: number }) {

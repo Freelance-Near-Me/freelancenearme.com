@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+
+type Health = {
+  ok?: boolean;
+  database?: string;
+  clerk?: string;
+};
 
 export default function Error({
   error,
@@ -10,17 +16,54 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [health, setHealth] = useState<Health | null>(null);
+
   useEffect(() => {
     console.error(error);
+    fetch("/api/health")
+      .then((r) => r.json())
+      .then(setHealth)
+      .catch(() => setHealth(null));
   }, [error]);
 
   return (
     <div className="mx-auto max-w-lg px-4 py-20 text-center">
       <h1 className="font-serif text-2xl text-slate-900">Something went wrong</h1>
       <p className="mt-3 text-sm text-slate-600">
-        This is usually a missing or invalid environment variable on the server (for example{" "}
-        <code className="rounded bg-slate-100 px-1">DATABASE_URL</code> or Clerk keys).
+        Check Vercel → Settings → Environment Variables, then redeploy.
       </p>
+
+      {health && (
+        <ul className="mt-6 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-left text-sm">
+          <li>
+            Database:{" "}
+            <strong className={health.database === "ok" ? "text-green-700" : "text-amber-700"}>
+              {health.database ?? "unknown"}
+            </strong>
+            {health.database !== "ok" && (
+              <span className="block text-xs text-slate-500">
+                Set DATABASE_URL or connect the Neon integration (POSTGRES_PRISMA_URL).
+              </span>
+            )}
+          </li>
+          <li>
+            Clerk:{" "}
+            <strong
+              className={health.clerk === "configured" ? "text-green-700" : "text-amber-700"}
+            >
+              {health.clerk ?? "unknown"}
+            </strong>
+            {health.clerk !== "configured" && (
+              <span className="block text-xs text-slate-500">
+                Set both NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY.
+              </span>
+            )}
+          </li>
+        </ul>
+      )}
+
+      <p className="mt-4 text-xs text-slate-500">{error.message}</p>
+
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <button
           type="button"
@@ -34,6 +77,12 @@ export default function Error({
           className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
           Home
+        </Link>
+        <Link
+          href="/api/health"
+          className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          Health check
         </Link>
       </div>
       {error.digest && (

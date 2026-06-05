@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole, requireUser } from "@/lib/auth";
-import { isDatabaseConfigured } from "@/lib/env";
+import { safeDbQuery } from "@/lib/db-safe";
 import { uniqueSlug } from "@/lib/slug";
 
 const jobSchema = z.object({
@@ -138,28 +138,32 @@ export async function publishJob(slug: string): Promise<void> {
 }
 
 export async function listOpenJobs(query?: string) {
-  if (!isDatabaseConfigured()) return [];
-
-  return prisma.job.findMany({
-    where: {
-      status: JobStatus.OPEN,
-      ...(query
-        ? {
-            OR: [
-              { title: { contains: query, mode: "insensitive" } },
-              { description: { contains: query, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      poster: { select: { firstName: true, lastName: true, username: true, country: true, city: true } },
-      skills: { include: { skill: true } },
-      _count: { select: { proposals: true } },
-    },
-    orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
-    take: 50,
-  });
+  return safeDbQuery(
+    () =>
+      prisma.job.findMany({
+        where: {
+          status: JobStatus.OPEN,
+          ...(query
+            ? {
+                OR: [
+                  { title: { contains: query, mode: "insensitive" } },
+                  { description: { contains: query, mode: "insensitive" } },
+                ],
+              }
+            : {}),
+        },
+        include: {
+          poster: {
+            select: { firstName: true, lastName: true, username: true, country: true, city: true },
+          },
+          skills: { include: { skill: true } },
+          _count: { select: { proposals: true } },
+        },
+        orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
+        take: 50,
+      }),
+    []
+  );
 }
 
 export async function getJobBySlug(slug: string) {
