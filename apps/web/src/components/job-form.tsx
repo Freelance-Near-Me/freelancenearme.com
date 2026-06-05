@@ -2,9 +2,11 @@ import { SkillPicker } from "@/components/skill-picker";
 import { Button } from "@/components/ui/button";
 
 type Skill = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string };
 
 type JobFormProps = {
   skills: Skill[];
+  categories?: Category[];
   selectedSkillIds?: string[];
   action: (formData: FormData) => void | Promise<void>;
   defaultValues?: {
@@ -17,12 +19,16 @@ type JobFormProps = {
     experienceLevel?: string;
     country?: string;
     city?: string;
+    categoryId?: string;
+    featured?: boolean;
+    urgent?: boolean;
   };
   isDraft?: boolean;
 };
 
 export function JobForm({
   skills,
+  categories = [],
   selectedSkillIds,
   action,
   defaultValues,
@@ -92,7 +98,34 @@ export function JobForm({
           <input name="city" defaultValue={d.city} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
         </label>
       </div>
+      {categories.length > 0 && (
+        <label className="block text-sm">
+          <span className="font-medium">Category</span>
+          <select
+            name="categoryId"
+            defaultValue={d.categoryId ?? ""}
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+          >
+            <option value="">Select a category</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <SkillPicker skills={skills} selectedIds={selectedSkillIds} />
+      <div className="flex flex-wrap gap-4 text-sm">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" name="featured" defaultChecked={d.featured} className="rounded" />
+          Feature this job
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" name="urgent" defaultChecked={d.urgent} className="rounded" />
+          Mark as urgent
+        </label>
+      </div>
       <div className="flex flex-wrap gap-3">
         <Button type="submit" name="publish" value="true">
           {isDraft ? "Publish job" : "Save & publish"}

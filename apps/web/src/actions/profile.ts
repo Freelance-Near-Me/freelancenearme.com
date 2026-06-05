@@ -151,7 +151,20 @@ export async function getTalentByUsername(username: string) {
       role: UserRole.TALENT,
     },
     include: {
-      talentProfile: { include: { skills: { include: { skill: true } } } },
+      talentProfile: {
+        include: {
+          skills: { include: { skill: true } },
+          portfolioItems: { orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] },
+        },
+      },
+      reviewsReceived: {
+        include: {
+          reviewer: { select: { firstName: true, lastName: true, username: true } },
+          contract: { select: { title: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
     },
   });
 }

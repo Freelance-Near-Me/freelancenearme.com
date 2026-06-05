@@ -7,6 +7,7 @@ import {
   type BillingMode,
   type WorkEnvironment,
   type ExperienceLevel,
+  type Prisma,
 } from "@fnm/database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -26,7 +27,23 @@ const jobSchema = z.object({
   country: z.string().optional(),
   city: z.string().optional(),
   skillIds: z.array(z.string()).optional(),
+  categoryId: z.string().optional(),
+  featured: z.coerce.boolean().optional(),
+  urgent: z.coerce.boolean().optional(),
 });
+
+export type JobFilters = {
+  q?: string;
+  category?: string;
+  environment?: WorkEnvironment;
+  billingMode?: BillingMode;
+  experienceLevel?: ExperienceLevel;
+  skill?: string;
+  minBudget?: number;
+  maxBudget?: number;
+  featured?: boolean;
+  urgent?: boolean;
+};
 
 function parseJobForm(formData: FormData) {
   const skillIds = formData.getAll("skillIds").map(String).filter(Boolean);
@@ -41,6 +58,9 @@ function parseJobForm(formData: FormData) {
     country: formData.get("country") || undefined,
     city: formData.get("city") || undefined,
     skillIds,
+    categoryId: formData.get("categoryId") || undefined,
+    featured: formData.get("featured") === "on",
+    urgent: formData.get("urgent") === "on",
   });
 }
 
@@ -78,6 +98,9 @@ export async function createJob(formData: FormData) {
       budgetMax: d.budgetMax,
       country: d.country ?? user.country,
       city: d.city ?? user.city,
+      categoryId: d.categoryId || null,
+      featured: d.featured ?? false,
+      urgent: d.urgent ?? false,
       publishedAt: publish ? new Date() : null,
     },
   });
@@ -111,6 +134,9 @@ export async function updateJob(slug: string, formData: FormData): Promise<void>
       budgetMax: d.budgetMax,
       country: d.country,
       city: d.city,
+      categoryId: d.categoryId || null,
+      featured: d.featured ?? job.featured,
+      urgent: d.urgent ?? job.urgent,
       ...(publish
         ? { status: JobStatus.OPEN, publishedAt: job.publishedAt ?? new Date() }
         : {}),
@@ -137,29 +163,48 @@ export async function publishJob(slug: string): Promise<void> {
   redirect(`/jobs/${slug}`);
 }
 
-export async function listOpenJobs(query?: string) {
+function buildJobWhere(filters: JobFilters = {}): Prisma.JobWhereInput {
+  const { q, category, environment, billingMode, experienceLevel, skill, minBudget, maxBudget, featured, urgent } =
+    filters;
+
+  return {
+    status: JobStatus.OPEN,
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { description: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+    ...(category ? { category: { slug: category } } : {}),
+    ...(environment ? { environment } : {}),
+    ...(billingMode ? { billingMode } : {}),
+    ...(experienceLevel ? { experienceLevel } : {}),
+    ...(featured ? { featured: true } : {}),
+    ...(urgent ? { urgent: true } : {}),
+    ...(skill ? { skills: { some: { skill: { slug: skill } } } } : {}),
+    ...(minBudget != null ? { budgetMax: { gte: minBudget } } : {}),
+    ...(maxBudget != null ? { budgetMin: { lte: maxBudget } } : {}),
+  };
+}
+
+export async function listOpenJobs(filters: JobFilters | string = {}) {
+  const resolved: JobFilters = typeof filters === "string" ? { q: filters } : filters;
+
   return safeDbQuery(
     () =>
       prisma.job.findMany({
-        where: {
-          status: JobStatus.OPEN,
-          ...(query
-            ? {
-                OR: [
-                  { title: { contains: query, mode: "insensitive" } },
-                  { description: { contains: query, mode: "insensitive" } },
-                ],
-              }
-            : {}),
-        },
+        where: buildJobWhere(resolved),
         include: {
           poster: {
             select: { firstName: true, lastName: true, username: true, country: true, city: true },
           },
+          category: { select: { name: true, slug: true } },
           skills: { include: { skill: true } },
           _count: { select: { proposals: true } },
         },
-        orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
+        orderBy: [{ featured: "desc" }, { urgent: "desc" }, { publishedAt: "desc" }],
         take: 50,
       }),
     []
@@ -171,6 +216,7 @@ export async function getJobBySlug(slug: string) {
     where: { slug },
     include: {
       poster: { select: { id: true, firstName: true, lastName: true, username: true, country: true, city: true } },
+      category: { select: { name: true, slug: true } },
       skills: { include: { skill: true } },
       proposals: {
         include: {

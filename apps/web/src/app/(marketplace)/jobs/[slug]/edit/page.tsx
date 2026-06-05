@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { JobStatus } from "@fnm/database";
+import { listCategories } from "@/actions/categories";
 import { getJobBySlug, updateJob, publishJob } from "@/actions/jobs";
 import { listSkills } from "@/actions/skills";
 import { getCurrentUser } from "@/lib/auth";
@@ -15,7 +16,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ slug: 
   const job = await getJobBySlug(slug);
   if (!job || job.posterId !== user.id) notFound();
 
-  const skills = await listSkills();
+  const [skills, categories] = await Promise.all([listSkills(), listCategories()]);
   const selectedSkillIds = job.skills.map((s) => s.skillId);
   const update = updateJob.bind(null, slug);
 
@@ -36,6 +37,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ slug: 
       <div className="mt-8">
         <JobForm
           skills={skills}
+          categories={categories}
           selectedSkillIds={selectedSkillIds}
           action={update}
           isDraft={job.status === JobStatus.DRAFT}
@@ -49,6 +51,9 @@ export default async function EditJobPage({ params }: { params: Promise<{ slug: 
             experienceLevel: job.experienceLevel,
             country: job.country ?? undefined,
             city: job.city ?? undefined,
+            categoryId: job.categoryId ?? undefined,
+            featured: job.featured,
+            urgent: job.urgent,
           }}
         />
       </div>

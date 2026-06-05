@@ -2,10 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContractStatus } from "@fnm/database";
 import { listContractActivity } from "@/actions/activity";
-import { acceptContract, getContract } from "@/actions/contracts";
+import { acceptContract, completeContract, getContract } from "@/actions/contracts";
+import { getReviewForContract } from "@/actions/reviews";
 import { listDeliverablesForContract } from "@/actions/deliverables";
 import { listMilestones } from "@/actions/milestones";
 import { ContractActivityTimeline } from "@/components/contract-activity-timeline";
+import { ReviewForm } from "@/components/review-form";
+import { ReviewsList } from "@/components/reviews-list";
 import { DeliverablesPanel } from "@/components/deliverables-panel";
 import { PageShell } from "@/components/layout/page-shell";
 import { MilestonePanel } from "@/components/milestone-panel";
@@ -36,12 +39,14 @@ export default async function ContractPage({
   const isTalent = user.id === contract.talentId;
   const isClient = user.id === contract.clientId;
   const canAccept = isTalent && contract.status === ContractStatus.PENDING_ACCEPTANCE;
-  const [milestones, deliverables, activities] = await Promise.all([
+  const [milestones, deliverables, activities, review] = await Promise.all([
     listMilestones(id),
     listDeliverablesForContract(id),
     listContractActivity(id),
+    getReviewForContract(id),
   ]);
   const contractActive = contract.status === ContractStatus.ACTIVE;
+  const contractCompleted = contract.status === ContractStatus.COMPLETED;
   const talentPayoutsReady = Boolean(
     contract.talent.talentProfile?.stripeChargesEnabled &&
       contract.talent.talentProfile?.stripePayoutsEnabled
@@ -97,6 +102,40 @@ export default async function ContractPage({
           </dl>
         </CardBody>
       </Card>
+
+      {isClient && contractActive && (
+        <div className="mb-8">
+          <form action={completeContract.bind(null, id)}>
+            <Button type="submit" variant="secondary">
+              Mark contract complete
+            </Button>
+          </form>
+          <p className="mt-2 text-xs text-slate-500">
+            Mark complete when all work is delivered. You can leave a review afterward.
+          </p>
+        </div>
+      )}
+
+      {contractCompleted && isClient && !review && (
+        <div className="mb-8">
+          <ReviewForm contractId={id} />
+        </div>
+      )}
+
+      {review && (
+        <div className="mb-8">
+          <h3 className="mb-3 font-semibold text-slate-900">Review</h3>
+          <ReviewsList
+            reviews={[
+              {
+                ...review,
+                contract: { title: contract.title },
+                reviewer: review.reviewer,
+              },
+            ]}
+          />
+        </div>
+      )}
 
       {isTalent && contractActive && !talentPayoutsReady && (
         <Alert variant="warning" className="mb-8">

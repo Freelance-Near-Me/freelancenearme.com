@@ -159,6 +159,24 @@ export async function getContract(contractId: string) {
   return contract;
 }
 
+export async function completeContract(contractId: string): Promise<void> {
+  const user = await requireUser();
+  const contract = await prisma.contract.findUnique({ where: { id: contractId } });
+  if (!contract) throw new Error("Contract not found");
+  if (contract.clientId !== user.id) throw new Error("Only the client can complete a contract");
+  if (contract.status !== ContractStatus.ACTIVE) {
+    throw new Error("Only active contracts can be marked complete");
+  }
+
+  await prisma.contract.update({
+    where: { id: contractId },
+    data: { status: ContractStatus.COMPLETED },
+  });
+
+  revalidatePath(`/contracts/${contractId}`);
+  revalidatePath("/dashboard");
+}
+
 export async function getMyContracts() {
   const user = await requireUser();
   return prisma.contract.findMany({

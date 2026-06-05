@@ -1,4 +1,5 @@
 import { UserRole } from "@fnm/database";
+import { listCategories } from "@/actions/categories";
 import { createJob } from "@/actions/jobs";
 import { listSkills } from "@/actions/skills";
 import { PageShell } from "@/components/layout/page-shell";
@@ -8,7 +9,7 @@ import { routes } from "@/lib/routes";
 
 export default async function PostJobPage() {
   await requireRole(UserRole.CLIENT);
-  const skills = await listSkills();
+  const [skills, categories] = await Promise.all([listSkills(), listCategories()]);
 
   return (
     <PageShell
@@ -17,7 +18,7 @@ export default async function PostJobPage() {
       back={{ href: routes.dashboard, label: "Dashboard" }}
       width="lg"
     >
-      <JobForm skills={skills} action={createJob} />
+      <JobForm skills={skills} categories={categories} action={createJob} />
     </PageShell>
   );
 }

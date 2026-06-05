@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 const publicLinks = [
   { href: routes.jobs, label: "Jobs" },
   { href: routes.talents, label: "Talent" },
+  { href: routes.categories, label: "Categories" },
   { href: "/how-it-works", label: "How it works" },
 ];
 

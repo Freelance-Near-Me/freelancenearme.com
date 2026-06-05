@@ -1,27 +1,36 @@
-import { listOpenJobs } from "@/actions/jobs";
+import { listOpenJobs, type JobFilters } from "@/actions/jobs";
 import { JobCard } from "@/components/job-card";
+import { JobFilters as JobFiltersForm } from "@/components/job-filters";
 import { PageShell } from "@/components/layout/page-shell";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { routes } from "@/lib/routes";
+
+function parseJobFilters(sp: Record<string, string | undefined>): JobFilters {
+  return {
+    q: sp.q,
+    category: sp.category,
+    environment: sp.environment as JobFilters["environment"],
+    billingMode: sp.billingMode as JobFilters["billingMode"],
+    experienceLevel: sp.experienceLevel as JobFilters["experienceLevel"],
+    skill: sp.skill,
+    minBudget: sp.minBudget ? Number(sp.minBudget) : undefined,
+    maxBudget: sp.maxBudget ? Number(sp.maxBudget) : undefined,
+    featured: sp.featured === "1" || sp.featured === "on",
+    urgent: sp.urgent === "1" || sp.urgent === "on",
+  };
+}
 
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const { q } = await searchParams;
-  const jobs = await listOpenJobs(q);
+  const sp = await searchParams;
+  const jobs = await listOpenJobs(parseJobFilters(sp));
 
   return (
     <PageShell title="Find work" description="Browse open freelance projects" width="full">
-      <form className="flex flex-col gap-3 sm:flex-row" method="get">
-        <Input name="q" defaultValue={q} placeholder="Search by title or keyword…" className="flex-1" />
-        <Button type="submit" className="shrink-0 sm:px-8">
-          Search
-        </Button>
-      </form>
+      <JobFiltersForm searchParams={sp} />
 
       <p className="mt-6 text-sm text-slate-500">
         {jobs.length} {jobs.length === 1 ? "project" : "projects"}
@@ -48,6 +57,8 @@ export default async function JobsPage({
               billingMode={job.billingMode}
               environment={job.environment}
               featured={job.featured}
+              urgent={job.urgent}
+              category={job.category}
               poster={job.poster}
               proposalCount={job._count.proposals}
             />

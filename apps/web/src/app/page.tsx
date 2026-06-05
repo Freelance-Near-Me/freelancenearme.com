@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listOpenJobs } from "@/actions/jobs";
+import { CategoryGrid } from "@/components/category-grid";
 import { JobCard } from "@/components/job-card";
 import { isDatabaseConfigured } from "@/lib/env";
 import { routes } from "@/lib/routes";
@@ -70,6 +71,8 @@ export default async function HomePage() {
               billingMode={job.billingMode}
               environment={job.environment}
               featured={job.featured}
+              urgent={job.urgent}
+              category={job.category}
               poster={job.poster}
               proposalCount={job._count.proposals}
             />
@@ -82,6 +85,8 @@ export default async function HomePage() {
           </p>
         )}
       </section>
+
+      <CategoryGrid />
     </div>
   );
 }
