@@ -11,6 +11,8 @@ type Health = {
   databaseError?: string;
   clerk?: string;
   clerkMissing?: string[];
+  clerkKeysFound?: string[];
+  clerkHint?: string;
 };
 
 export default function Error({
@@ -69,6 +71,14 @@ export default function Error({
             >
               {health.clerk ?? "unknown"}
             </strong>
+            {health.clerkKeysFound && health.clerkKeysFound.length > 0 && (
+              <span className="block text-xs text-slate-500">
+                Keys found: {health.clerkKeysFound.join(", ")}
+              </span>
+            )}
+            {health.clerkHint && (
+              <span className="block text-xs text-amber-700">{health.clerkHint}</span>
+            )}
             {health.clerk !== "configured" && (
               <span className="block text-xs text-slate-500">
                 {health.clerkMissing?.length

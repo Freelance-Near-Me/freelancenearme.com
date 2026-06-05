@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
-import { isClerkConfigured } from "@/lib/env";
+import { getClerkPublishableKey, isClerkConfigured } from "@/lib/env-clerk";
 import "./globals.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const publishableKey = getClerkPublishableKey();
   const hasClerk = isClerkConfigured();
 
   const inner = (
@@ -35,7 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${dmSans.variable} ${instrumentSerif.variable}`}>
       <body className="flex min-h-screen flex-col font-sans">
-        {hasClerk ? <ClerkProvider>{inner}</ClerkProvider> : inner}
+        {hasClerk && publishableKey ? (
+          <ClerkProvider publishableKey={publishableKey}>{inner}</ClerkProvider>
+        ) : (
+          inner
+        )}
       </body>
     </html>
   );

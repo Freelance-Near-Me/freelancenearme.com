@@ -1,36 +1,45 @@
 /** Edge-safe env checks (no Prisma / Node database imports). */
 
-const CLERK_PUBLISHABLE_KEYS = [
-  "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
-  "CLERK_PUBLISHABLE_KEY",
-] as const;
-
-const CLERK_SECRET_KEYS = ["CLERK_SECRET_KEY"] as const;
-
-function firstSetEnv(keys: readonly string[]): string | undefined {
-  for (const key of keys) {
-    const value = process.env[key]?.trim();
-    if (value) return key;
-  }
-  return undefined;
-}
+/**
+ * Next.js inlines only statically referenced process.env.* keys at build time.
+ * Do not use process.env[variable] — dynamic lookups return undefined in production.
+ */
 
 export function getClerkPublishableKey(): string | undefined {
-  for (const key of CLERK_PUBLISHABLE_KEYS) {
-    const value = process.env[key]?.trim();
-    if (value) return value;
-  }
-  return undefined;
+  return (
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim() ||
+    process.env.CLERK_PUBLISHABLE_KEY?.trim() ||
+    undefined
+  );
 }
 
 export function getClerkSecretKey(): string | undefined {
   return process.env.CLERK_SECRET_KEY?.trim() || undefined;
 }
 
+/** Which Clerk-related env keys are set (names only — for /api/health). */
+export function listClerkEnvKeysFound(): string[] {
+  const found: string[] = [];
+  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim()) {
+    found.push("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
+  }
+  if (process.env.CLERK_PUBLISHABLE_KEY?.trim()) {
+    found.push("CLERK_PUBLISHABLE_KEY");
+  }
+  if (process.env.CLERK_SECRET_KEY?.trim()) {
+    found.push("CLERK_SECRET_KEY");
+  }
+  return found;
+}
+
 export function getClerkMissingKeys(): string[] {
   const missing: string[] = [];
-  if (!getClerkPublishableKey()) missing.push("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
-  if (!getClerkSecretKey()) missing.push("CLERK_SECRET_KEY");
+  if (!getClerkPublishableKey()) {
+    missing.push("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
+  }
+  if (!getClerkSecretKey()) {
+    missing.push("CLERK_SECRET_KEY");
+  }
   return missing;
 }
 
@@ -40,11 +49,20 @@ export function isClerkConfigured(): boolean {
 }
 
 export function getClerkDiagnostics() {
+  const keysFound = listClerkEnvKeysFound();
+  const hasServerOnlyPublishable =
+    Boolean(process.env.CLERK_PUBLISHABLE_KEY?.trim()) &&
+    !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim();
+
   return {
     configured: isClerkConfigured(),
-    publishableKeySet: Boolean(firstSetEnv(CLERK_PUBLISHABLE_KEYS)),
-    secretKeySet: Boolean(firstSetEnv(CLERK_SECRET_KEYS)),
+    publishableKeySet: Boolean(getClerkPublishableKey()),
+    secretKeySet: Boolean(getClerkSecretKey()),
+    keysFound,
     missing: getClerkMissingKeys(),
+    hint: hasServerOnlyPublishable
+      ? "CLERK_PUBLISHABLE_KEY is set but NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required for the browser. Add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY with the same pk_ value in Vercel → Production, then redeploy."
+      : undefined,
   };
 }
 

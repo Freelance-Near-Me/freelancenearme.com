@@ -30,7 +30,9 @@ export async function GET() {
       databaseKeysFound: dbDiag.keysFound,
       ...(databaseError ? { databaseError } : {}),
       clerk: clerkDiag.configured ? "configured" : "not_configured",
+      clerkKeysFound: clerkDiag.keysFound,
       clerkMissing: clerkDiag.missing,
+      ...(clerkDiag.hint ? { clerkHint: clerkDiag.hint } : {}),
     },
     { status: ok ? 200 : 503 }
   );
