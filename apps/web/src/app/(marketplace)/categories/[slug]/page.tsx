@@ -1,11 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/actions/categories";
 import { listOpenJobs } from "@/actions/jobs";
 import { JobCard } from "@/components/job-card";
 import { PageShell } from "@/components/layout/page-shell";
+import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { routes } from "@/lib/routes";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const category = await getCategoryBySlug(slug);
+  if (!category) return { title: "Category not found" };
+
+  const description =
+    category.description ??
+    `Find freelancers and open jobs in ${category.name} on Freelance Near Me.`;
+
+  return {
+    title: `${category.name} freelancers and jobs`,
+    description,
+    openGraph: { title: category.name, description },
+  };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -17,10 +39,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   return (
     <PageShell
       title={category.name}
-      description={`Open projects in ${category.name.toLowerCase()}`}
+      description={category.description ?? `Open projects in ${category.name.toLowerCase()}`}
       back={{ href: routes.categories, label: "All categories" }}
       width="full"
     >
+      {category.isLocal && (
+        <Badge variant="info" className="mb-6">
+          Often delivered in person near you
+        </Badge>
+      )}
       {category.skills.length > 0 && (
         <div className="mb-8">
           <h2 className="text-sm font-semibold text-slate-700">Popular skills</h2>

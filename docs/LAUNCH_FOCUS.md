@@ -6,7 +6,7 @@ Freelance Near Me launches one category in one geography at a time so both sides
 
 | Dimension | Value |
 |-----------|--------|
-| Category | Development (React, Node.js) |
+| Category | Development and IT (`development-and-it`, skills: React, Node.js) |
 | Geography | Greater Manchester, UK |
 | Postcode anchor | M1 1AA |
 

@@ -26,7 +26,7 @@ export async function getCategoryBySlug(slug: string) {
         include: {
           parent: true,
           children: { orderBy: { sortOrder: "asc" } },
-          skills: { orderBy: { name: "asc" } },
+          skills: { orderBy: { sortOrder: "asc" } },
         },
       }),
     null

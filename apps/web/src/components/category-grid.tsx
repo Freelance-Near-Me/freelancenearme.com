@@ -3,7 +3,7 @@ import { listCategories } from "@/actions/categories";
 import { routes } from "@/lib/routes";
 
 export async function CategoryGrid() {
-  const categories = await listCategories();
+  const categories = (await listCategories()).filter((cat) => cat._count.jobs > 0);
   if (categories.length === 0) return null;
 
   return (
@@ -18,8 +18,12 @@ export async function CategoryGrid() {
             className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
           >
             <h3 className="font-semibold text-slate-900">{cat.name}</h3>
-            <p className="mt-1 text-sm text-slate-500">
+            {cat.description && (
+              <p className="mt-1 line-clamp-2 text-sm text-slate-600">{cat.description}</p>
+            )}
+            <p className="mt-2 text-sm text-slate-500">
               {cat._count.jobs} {cat._count.jobs === 1 ? "job" : "jobs"}
+              {cat.isLocal ? " · Local" : ""}
             </p>
           </Link>
         ))}

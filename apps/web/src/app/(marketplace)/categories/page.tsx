@@ -17,6 +17,9 @@ export default async function CategoriesPage() {
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-200 hover:shadow-md"
             >
               <h2 className="font-semibold text-slate-900">{cat.name}</h2>
+              {cat.description && (
+                <p className="mt-2 line-clamp-2 text-sm text-slate-600">{cat.description}</p>
+              )}
               <p className="mt-2 text-sm text-slate-500">
                 {cat._count.jobs} open {cat._count.jobs === 1 ? "job" : "jobs"}
               </p>

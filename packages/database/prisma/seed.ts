@@ -9,6 +9,7 @@ import {
   ContractStatus,
   ProposalStatus,
 } from "../src/index.js";
+import { seedCategories } from "./seed-categories.js";
 
 function slugify(text: string) {
   return text
@@ -19,44 +20,18 @@ function slugify(text: string) {
 }
 
 async function main() {
-  const categories = await Promise.all(
-    [
-      { name: "Development", slug: "development", sortOrder: 1 },
-      { name: "Design", slug: "design", sortOrder: 2 },
-      { name: "Marketing", slug: "marketing", sortOrder: 3 },
-      { name: "Writing", slug: "writing", sortOrder: 4 },
-    ].map((c) =>
-      prisma.category.upsert({
-        where: { slug: c.slug },
-        create: c,
-        update: { name: c.name, sortOrder: c.sortOrder },
-      })
-    )
-  );
+  await seedCategories();
 
-  const devCat = categories[0];
-  const designCat = categories[1];
-  const marketingCat = categories[2];
-  const writingCat = categories[3];
+  const devCat = await prisma.category.findUniqueOrThrow({
+    where: { slug: "development-and-it" },
+  });
+  const marketingCat = await prisma.category.findUniqueOrThrow({
+    where: { slug: "marketing" },
+  });
 
-  const skillDefs = [
-    { name: "React", categoryId: devCat.id },
-    { name: "Node.js", categoryId: devCat.id },
-    { name: "React Native", categoryId: devCat.id },
-    { name: "UI/UX Design", categoryId: designCat.id },
-    { name: "SEO", categoryId: marketingCat.id },
-    { name: "Content Writing", categoryId: writingCat.id },
-  ];
-
-  const skills = await Promise.all(
-    skillDefs.map(({ name, categoryId }) =>
-      prisma.skill.upsert({
-        where: { slug: slugify(name) },
-        create: { name, slug: slugify(name), categoryId },
-        update: { categoryId },
-      })
-    )
-  );
+  const reactSkill = await prisma.skill.findUniqueOrThrow({ where: { slug: "react" } });
+  const nodeSkill = await prisma.skill.findUniqueOrThrow({ where: { slug: "node-js" } });
+  const seoSkill = await prisma.skill.findUniqueOrThrow({ where: { slug: "seo" } });
 
   const client = await prisma.user.upsert({
     where: { clerkId: "seed_client_1" },
@@ -100,13 +75,13 @@ async function main() {
       longitude: -2.2891921,
       talentProfile: {
         create: {
-          headline: "Full-stack developer · React & Node",
+          headline: "Full-stack developer · React and Node",
           bio: "10+ years building SaaS for startups.",
           hourlyRate: 85,
           availability: "open",
           verified: true,
           skills: {
-            create: [{ skillId: skills[0].id }, { skillId: skills[1].id }],
+            create: [{ skillId: reactSkill.id }, { skillId: nodeSkill.id }],
           },
         },
       },
@@ -115,7 +90,9 @@ async function main() {
     include: { talentProfile: true },
   });
 
-  const talentProfile = talent.talentProfile ?? (await prisma.talentProfile.findUnique({ where: { userId: talent.id } }));
+  const talentProfile =
+    talent.talentProfile ??
+    (await prisma.talentProfile.findUnique({ where: { userId: talent.id } }));
   if (talentProfile) {
     await prisma.portfolioItem.deleteMany({ where: { talentProfileId: talentProfile.id } });
     await prisma.portfolioItem.createMany({
@@ -123,7 +100,8 @@ async function main() {
         {
           talentProfileId: talentProfile.id,
           title: "SaaS dashboard redesign",
-          description: "Led frontend architecture and shipped a React analytics dashboard for a B2B startup.",
+          description:
+            "Led frontend architecture and shipped a React analytics dashboard for a B2B startup.",
           projectUrl: "https://example.com",
           sortOrder: 0,
         },
@@ -148,6 +126,7 @@ async function main() {
       featured: true,
       urgent: false,
       categoryId: devCat.id,
+      skillIds: [reactSkill.id, nodeSkill.id],
     },
     {
       title: "Monthly SEO retainer for local brand",
@@ -158,6 +137,7 @@ async function main() {
       featured: false,
       urgent: true,
       categoryId: marketingCat.id,
+      skillIds: [seoSkill.id],
     },
   ];
 
@@ -186,7 +166,7 @@ async function main() {
         categoryId: j.categoryId,
         publishedAt: new Date(),
         skills: {
-          create: [{ skillId: skills[0].id }, { skillId: skills[1].id }],
+          create: j.skillIds.map((skillId) => ({ skillId })),
         },
       },
       update: {
@@ -197,8 +177,9 @@ async function main() {
     });
   }
 
-  // Completed contract + review for demo trust signals
-  const job = await prisma.job.findUnique({ where: { slug: "rebuild-marketing-site-in-next-js-demo" } });
+  const job = await prisma.job.findUnique({
+    where: { slug: "rebuild-marketing-site-in-next-js-demo" },
+  });
   if (job) {
     const proposal = await prisma.proposal.upsert({
       where: { jobId_talentId: { jobId: job.id, talentId: talent.id } },
@@ -235,7 +216,7 @@ async function main() {
         reviewerId: client.id,
         revieweeId: talent.id,
         rating: 5,
-        comment: "Excellent work — delivered on time and communicated clearly throughout.",
+        comment: "Excellent work. Delivered on time and communicated clearly throughout.",
       },
       update: {},
     });
