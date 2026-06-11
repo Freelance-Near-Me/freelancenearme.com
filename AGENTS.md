@@ -12,6 +12,15 @@
 - `application/` — legacy PHP (CodeIgniter)
 - `server/`, `client/` — archived MERN prototype
 
+## Related repo (not this one)
+
+**bmkrs bench** (partner portal, app.bmkrs.com) lives in a separate repo — do not add bench features here:
+
+- https://github.com/shanepowel/bmkrs-bench
+- local clone: `/Users/shanepowell/bmkrs-bench`
+
+This repo (`master`) is **Freelance Near Me** only.
+
 ## Docs
 
 - [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
