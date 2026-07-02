@@ -8,6 +8,7 @@ import {
   ExperienceLevel,
   ContractStatus,
   ProposalStatus,
+  VerificationTier,
 } from "../src/index.js";
 import { seedCategories } from "./seed-categories.js";
 
@@ -80,6 +81,7 @@ async function main() {
           hourlyRate: 85,
           availability: "open",
           verified: true,
+          verificationTier: VerificationTier.VERIFIED,
           skills: {
             create: [{ skillId: reactSkill.id }, { skillId: nodeSkill.id }],
           },
@@ -221,6 +223,30 @@ async function main() {
       update: {},
     });
   }
+
+  await prisma.proofClient.deleteMany({});
+  await prisma.proofClient.createMany({
+    data: [
+      { name: "Stripe", permissionGranted: true, active: true, sortOrder: 0 },
+      { name: "Notion", permissionGranted: true, active: true, sortOrder: 1 },
+      { name: "Linear", permissionGranted: true, active: true, sortOrder: 2 },
+      { name: "Vercel", permissionGranted: true, active: true, sortOrder: 3 },
+    ],
+  });
+
+  await prisma.proofTestimonial.deleteMany({});
+  await prisma.proofTestimonial.create({
+    data: {
+      quote:
+        "We replaced two agencies with three freelancers from the platform. Six weeks to launch, fixed-price milestones, no surprise invoices. We reviewed all proposals before anyone started.",
+      authorName: "Jordan Lee",
+      authorTitle: "VP Product, fintech",
+      authorInitials: "JL",
+      approved: true,
+      featured: true,
+      sortOrder: 0,
+    },
+  });
 
   console.log("Seed complete.");
   console.log("Demo users are Prisma-only. Create real accounts via Clerk sign-up in production.");

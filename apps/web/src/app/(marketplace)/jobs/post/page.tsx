@@ -7,6 +7,8 @@ import { JobForm } from "@/components/job-form";
 import { requireRole } from "@/lib/auth";
 import { routes } from "@/lib/routes";
 
+export const dynamic = "force-dynamic";
+
 export default async function PostJobPage() {
   await requireRole(UserRole.CLIENT);
   const [skills, categories] = await Promise.all([listSkills(), listCategories()]);

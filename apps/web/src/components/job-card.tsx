@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatBudgetRange } from "@/lib/format";
+import { Money } from "@/components/money/money";
 import { formatDistanceMiles } from "@/lib/geocode";
 import { routes } from "@/lib/routes";
 
@@ -21,6 +21,32 @@ type JobCardProps = {
   location?: { city?: string | null; country?: string | null; postcode?: string | null };
   distanceMiles?: number;
 };
+
+function formatBudget(
+  budgetMin: { toString(): string },
+  budgetMax: { toString(): string },
+  billingMode: string
+) {
+  const min = Number(budgetMin);
+  const max = Number(budgetMax);
+  const suffix = billingMode === "HOURLY" ? "/hr" : "";
+  if (min === max) {
+    return (
+      <>
+        <Money amount={min} size="sm" />
+        {suffix}
+      </>
+    );
+  }
+  return (
+    <>
+      <Money amount={min} size="sm" />
+      {" – "}
+      <Money amount={max} size="sm" />
+      {suffix}
+    </>
+  );
+}
 
 export function JobCard({
   slug,
@@ -43,11 +69,11 @@ export function JobCard({
     .join(", ");
 
   return (
-    <Card className="transition hover:border-blue-200 hover:shadow-md">
+    <Card className="transition hover:border-ochre-500/30 hover:shadow-md">
       <CardBody>
         <div className="mb-3 flex flex-wrap gap-2">
-          {featured && <Badge variant="warning">Featured</Badge>}
-          {urgent && <Badge variant="info">Urgent</Badge>}
+          {featured && <Badge variant="ochre">Featured</Badge>}
+          {urgent && <Badge variant="warning">Urgent</Badge>}
           {category && (
             <Link href={routes.category(category.slug)}>
               <Badge variant="muted">{category.name}</Badge>
@@ -56,18 +82,16 @@ export function JobCard({
         </div>
         <Link
           href={routes.job(slug)}
-          className="text-lg font-semibold text-slate-900 hover:text-blue-600"
+          className="text-lg font-semibold text-ink-900 hover:text-ochre-700"
         >
           {title}
         </Link>
-        <p className="mt-2 line-clamp-2 text-sm text-slate-600">{description}</p>
+        <p className="mt-2 line-clamp-2 text-sm text-ink-600">{description}</p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm">
-          <span className="font-semibold text-slate-900">
-            {formatBudgetRange(budgetMin, budgetMax, billingMode)}
-          </span>
-          <span className="capitalize text-slate-500">{environment.toLowerCase()}</span>
+          <span className="font-semibold">{formatBudget(budgetMin, budgetMax, billingMode)}</span>
+          <span className="capitalize text-ink-500">{environment.toLowerCase()}</span>
         </div>
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-ink-500">
           {poster && (
             <>
               {poster.firstName} {poster.lastName}

@@ -7,6 +7,7 @@ import {
   ActivityType,
   NotificationType,
   PaymentTransactionType,
+  VerificationTier,
 } from "@fnm/database";
 import { recordPaymentTransaction } from "@/lib/payment-ledger";
 import { logContractActivity } from "@/lib/contract-activity";
@@ -109,11 +110,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
 async function handleAccountUpdated(account: Stripe.Account) {
   if (!account.id) return;
-  await prisma.talentProfile.updateMany({
+
+  const profiles = await prisma.talentProfile.findMany({
     where: { stripeAccountId: account.id },
-    data: {
-      stripeChargesEnabled: account.charges_enabled ?? false,
-      stripePayoutsEnabled: account.payouts_enabled ?? false,
-    },
+    select: { id: true, verificationTier: true },
   });
+
+  for (const profile of profiles) {
+    const payoutsEnabled = account.payouts_enabled ?? false;
+    const data: {
+      stripeChargesEnabled: boolean;
+      stripePayoutsEnabled: boolean;
+      verified?: boolean;
+      verificationTier?: VerificationTier;
+    } = {
+      stripeChargesEnabled: account.charges_enabled ?? false,
+      stripePayoutsEnabled: payoutsEnabled,
+    };
+
+    if (payoutsEnabled && profile.verificationTier !== VerificationTier.TOP_RATED) {
+      data.verified = true;
+      data.verificationTier = VerificationTier.VERIFIED;
+    }
+
+    await prisma.talentProfile.update({
+      where: { id: profile.id },
+      data,
+    });
+  }
 }

@@ -5,9 +5,9 @@ import { Field } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Money } from "@/components/money/money";
 import { MILESTONE_STATUS_LABEL } from "@/lib/labels";
 import { isStripeConfigured } from "@/lib/stripe";
-import { formatMoney } from "@/lib/format";
 import { routes } from "@/lib/routes";
 
 type Milestone = {
@@ -68,7 +68,9 @@ export function MilestonePanel({
                     )}
                   </div>
                   <div className="text-right text-sm">
-                    <p className="font-semibold">{formatMoney(Number(m.amount))}</p>
+                    <p className="font-semibold">
+                      <Money amount={Number(m.amount)} size="sm" />
+                    </p>
                     <p className="text-slate-500">{MILESTONE_STATUS_LABEL[m.status]}</p>
                   </div>
                 </div>

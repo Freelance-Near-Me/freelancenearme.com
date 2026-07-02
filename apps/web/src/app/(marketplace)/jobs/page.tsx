@@ -8,6 +8,8 @@ import { PageShell } from "@/components/layout/page-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { routes } from "@/lib/routes";
 
+export const revalidate = 3600;
+
 function parseJobFilters(sp: Record<string, string | undefined>): JobFilters {
   return {
     q: sp.q,

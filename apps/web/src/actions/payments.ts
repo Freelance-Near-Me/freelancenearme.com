@@ -23,6 +23,7 @@ import { pushNotification } from "@/lib/in-app-notify";
 import { notifyMilestonePaid } from "@/lib/notifications";
 import { formatMoney } from "@/lib/utils";
 import { recordPaymentTransaction } from "@/lib/payment-ledger";
+import { recomputeAndStoreJobSuccessScore } from "@/lib/job-success-score";
 import { revalidatePath } from "next/cache";
 
 export async function createMilestoneCheckout(milestoneId: string): Promise<void> {
@@ -118,6 +119,7 @@ export async function releaseMilestonePayment(milestoneId: string): Promise<void
       where: { id: milestoneId },
       data: { status: MilestoneStatus.PAID, paidAt: new Date() },
     });
+    await recomputeAndStoreJobSuccessScore(milestone.contract.talentId);
     revalidatePath(`/contracts/${milestone.contractId}`);
     return;
   }
@@ -190,4 +192,6 @@ export async function releaseMilestonePayment(milestoneId: string): Promise<void
   });
 
   revalidatePath(`/contracts/${milestone.contractId}`);
+
+  await recomputeAndStoreJobSuccessScore(milestone.contract.talentId);
 }

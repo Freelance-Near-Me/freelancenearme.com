@@ -1,4 +1,4 @@
-import { prisma, UserRole } from "@fnm/database";
+import { prisma, UserRole, VerificationTier } from "@fnm/database";
 
 /** Clerk webhook / API user payload (snake_case) */
 export type ClerkUserPayload = {
@@ -47,7 +47,7 @@ export async function upsertUserFromClerk(clerkUser: ClerkUserPayload) {
   const role = resolveRole(clerkUser);
   const username = defaultUsername(clerkUser, email);
 
-  return prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: { clerkId: clerkUser.id },
     create: {
       clerkId: clerkUser.id,
@@ -59,7 +59,11 @@ export async function upsertUserFromClerk(clerkUser: ClerkUserPayload) {
       avatarUrl: clerkUser.image_url ?? undefined,
       ...(role === UserRole.CLIENT
         ? { clientProfile: { create: {} } }
-        : { talentProfile: { create: {} } }),
+        : {
+            talentProfile: {
+              create: { verificationTier: VerificationTier.EMAIL },
+            },
+          }),
     },
     update: {
       email,
@@ -69,6 +73,15 @@ export async function upsertUserFromClerk(clerkUser: ClerkUserPayload) {
     },
     include: { clientProfile: true, talentProfile: true },
   });
+
+  if (user.talentProfile?.verificationTier === VerificationTier.UNVERIFIED) {
+    await prisma.talentProfile.update({
+      where: { userId: user.id },
+      data: { verificationTier: VerificationTier.EMAIL },
+    });
+  }
+
+  return user;
 }
 
 export async function deleteUserByClerkId(clerkId: string) {

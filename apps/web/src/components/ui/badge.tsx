@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "default" | "success" | "warning" | "info" | "muted";
+type BadgeVariant = "default" | "success" | "warning" | "info" | "muted" | "ochre";
 
 const variants: Record<BadgeVariant, string> = {
-  default: "bg-slate-100 text-slate-700",
-  success: "bg-green-100 text-green-800",
-  warning: "bg-amber-100 text-amber-900",
-  info: "bg-blue-100 text-blue-800",
-  muted: "bg-slate-200 text-slate-600",
+  default: "bg-bone-50 text-ink-700 border border-bone-200",
+  success: "chip-jade",
+  warning: "bg-ochre-100 text-ochre-700 border border-ochre-500/35",
+  info: "bg-bone-50 text-ink-700 border border-bone-200",
+  muted: "bg-bone-200/60 text-ink-500",
+  ochre: "chip-ochre",
 };
 
 export function Badge({

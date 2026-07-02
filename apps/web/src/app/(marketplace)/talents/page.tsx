@@ -5,6 +5,8 @@ import { PageShell } from "@/components/layout/page-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { routes } from "@/lib/routes";
 
+export const revalidate = 3600;
+
 export default async function TalentsPage({
   searchParams,
 }: {
@@ -57,6 +59,8 @@ export default async function TalentsPage({
                 hourlyRate={t.talentProfile?.hourlyRate}
                 availability={t.talentProfile?.availability}
                 verified={t.talentProfile?.verified}
+                verificationTier={t.talentProfile?.verificationTier}
+                jobSuccessScore={t.talentProfile?.jobSuccessScore}
                 skills={t.talentProfile?.skills}
                 averageRating={averageRating}
                 reviewCount={reviewCount}

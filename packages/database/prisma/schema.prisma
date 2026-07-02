@@ -86,6 +86,13 @@ enum NotificationType {
   SYSTEM
 }
 
+enum VerificationTier {
+  UNVERIFIED
+  EMAIL
+  VERIFIED
+  TOP_RATED
+}
+
 enum PaymentTransactionType {
   FUND
   RELEASE
@@ -176,6 +183,8 @@ model TalentProfile {
   hourlyRate   Decimal? @db.Decimal(10, 2)
   availability           String?  @default("open")
   verified               Boolean  @default(false)
+  verificationTier       VerificationTier @default(UNVERIFIED)
+  jobSuccessScore        Int?
   stripeAccountId        String?  @unique
   stripeChargesEnabled   Boolean  @default(false)
   stripePayoutsEnabled   Boolean  @default(false)
@@ -504,4 +513,33 @@ model SavedSearch {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model ProofClient {
+  id                String   @id @default(cuid())
+  name              String
+  logoUrl           String?
+  websiteUrl        String?
+  permissionGranted Boolean  @default(false)
+  active            Boolean  @default(true)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([active, permissionGranted])
+}
+
+model ProofTestimonial {
+  id             String   @id @default(cuid())
+  quote          String   @db.Text
+  authorName     String
+  authorTitle    String?
+  authorInitials String?
+  approved       Boolean  @default(false)
+  featured       Boolean  @default(false)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([featured, approved])
 }

@@ -6,8 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
 import { getUnreadMessageCount } from "@/actions/inbox";
 import { routes } from "@/lib/routes";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 
 const publicLinks = [
   { href: routes.jobs, label: "Jobs" },
@@ -27,7 +26,7 @@ async function unreadCount(userId: string) {
 function NotificationBadge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+    <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-ochre-500 px-1 text-[10px] font-bold text-ink-900">
       {count > 9 ? "9+" : count}
     </span>
   );
@@ -41,9 +40,12 @@ export async function SiteHeader() {
     : [0, 0];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href={routes.home} className="font-serif text-xl font-medium tracking-tight text-slate-900">
+    <header className="sticky top-0 z-50 border-b border-bone-200/80 bg-bone/95 backdrop-blur-md">
+      <div className="container-elite flex h-16 items-center justify-between gap-4">
+        <Link
+          href={routes.home}
+          className="font-serif text-xl font-medium tracking-tight text-ink-900"
+        >
           Freelance Near Me
         </Link>
 
@@ -52,7 +54,7 @@ export async function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
+              className="text-sm font-medium text-ink-700 transition hover:text-ink-900"
             >
               {l.label}
             </Link>
@@ -63,35 +65,41 @@ export async function SiteHeader() {
           {hasClerk ? (
             <>
               <Show when="signed-out">
-                <Link href={routes.signIn} className="hidden text-sm font-medium text-slate-600 sm:inline">
+                <Link
+                  href={routes.signIn}
+                  className="hidden text-sm font-medium text-ink-700 sm:inline"
+                >
                   Log in
                 </Link>
-                <Link href={routes.signUp("client")}>
-                  <Button>Get started</Button>
-                </Link>
+                <ButtonLink href={routes.signUp("client")} variant="ink">
+                  Get started
+                </ButtonLink>
               </Show>
               <Show when="signed-in">
                 <Link
                   href={routes.inbox}
-                  className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"
+                  className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
                 >
                   Inbox
                   <NotificationBadge count={unreadMessages} />
                 </Link>
                 <Link
                   href={routes.notifications}
-                  className="relative hidden px-2 text-sm font-medium text-slate-600 sm:inline"
+                  className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
                 >
                   Alerts
                   <NotificationBadge count={unread} />
                 </Link>
-                <Link href={routes.dashboard} className="hidden text-sm font-medium text-slate-600 md:inline">
+                <Link
+                  href={routes.dashboard}
+                  className="hidden text-sm font-medium text-ink-700 md:inline"
+                >
                   Dashboard
                 </Link>
                 {user?.role === UserRole.CLIENT && (
-                  <Link href={routes.postJob} className="hidden md:inline">
-                    <Button variant="secondary">Post job</Button>
-                  </Link>
+                  <ButtonLink href={routes.postJob} variant="quiet" className="hidden md:inline-flex">
+                    Post job
+                  </ButtonLink>
                 )}
                 <UserButton />
               </Show>
@@ -99,12 +107,15 @@ export async function SiteHeader() {
           ) : (
             <>
               {user && (
-                <Link href={routes.notifications} className="relative text-sm font-medium text-slate-600">
+                <Link
+                  href={routes.notifications}
+                  className="relative text-sm font-medium text-ink-700"
+                >
                   Alerts
                   <NotificationBadge count={unread} />
                 </Link>
               )}
-              <Link href={routes.dashboard} className="text-sm font-medium text-slate-600">
+              <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
                 Dashboard
               </Link>
             </>

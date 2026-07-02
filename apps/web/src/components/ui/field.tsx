@@ -25,7 +25,7 @@ export function Field({
 }: FieldProps) {
   return (
     <label className="block text-sm">
-      <span className="font-medium text-slate-700">{label}</span>
+      <span className="font-medium text-ink-700">{label}</span>
       {as === "textarea" ? (
         <Textarea
           name={name}

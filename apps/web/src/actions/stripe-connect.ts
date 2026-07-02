@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma, UserRole } from "@fnm/database";
+import { prisma, UserRole, VerificationTier } from "@fnm/database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireRole, requireUser } from "@/lib/auth";
@@ -65,11 +65,16 @@ export async function refreshStripeConnectStatus(): Promise<void> {
 
   const account = await getStripe().accounts.retrieve(profile.stripeAccountId);
 
+  const payoutsEnabled = account.payouts_enabled ?? false;
+
   await prisma.talentProfile.update({
     where: { userId: user.id },
     data: {
       stripeChargesEnabled: account.charges_enabled ?? false,
-      stripePayoutsEnabled: account.payouts_enabled ?? false,
+      stripePayoutsEnabled: payoutsEnabled,
+      ...(payoutsEnabled && profile?.verificationTier !== VerificationTier.TOP_RATED
+        ? { verified: true, verificationTier: VerificationTier.VERIFIED }
+        : {}),
     },
   });
 

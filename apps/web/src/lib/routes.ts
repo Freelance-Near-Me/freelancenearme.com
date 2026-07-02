@@ -21,6 +21,7 @@ export const routes = {
   transactions: "/settings/transactions",
   contract: (id: string) => `/contracts/${id}`,
   payouts: "/settings/payouts",
+  savedSearches: "/saved-searches",
   signIn: "/sign-in",
   signUp: (role?: "client" | "talent") =>
     role ? `/sign-up?role=${role}` : "/sign-up",

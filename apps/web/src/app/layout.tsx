@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { DM_Sans, Instrument_Serif } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { getClerkPublishableKey, isClerkConfigured } from "@/lib/env-clerk";
 import "./globals.css";
 
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
 });
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Freelance Near Me",
@@ -27,14 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <>
       <SiteHeader />
       <main className="flex-1">{children}</main>
-      <footer className="mt-auto border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} Freelance Near Me
-      </footer>
+      <SiteFooter />
     </>
   );
 
   return (
-    <html lang="en" className={`${dmSans.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="flex min-h-screen flex-col font-sans">
         {hasClerk && publishableKey ? (
           <ClerkProvider publishableKey={publishableKey}>{inner}</ClerkProvider>

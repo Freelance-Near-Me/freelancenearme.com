@@ -4,7 +4,8 @@ import { PageShell } from "@/components/layout/page-shell";
 import { Card, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatDateTime, formatMoney } from "@/lib/format";
+import { Money } from "@/components/money/money";
+import { formatDateTime } from "@/lib/format";
 import { routes } from "@/lib/routes";
 
 const typeLabels: Record<string, string> = {
@@ -35,27 +36,42 @@ export default async function TransactionsPage() {
               <Card>
                 <CardBody className="space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-medium text-slate-900">
+                    <p className="font-medium text-ink-900">
                       {tx.milestone?.title ?? tx.contract.title}
                     </p>
                     <Badge>{typeLabels[tx.type] ?? tx.type}</Badge>
                   </div>
-                  <p className="text-sm text-slate-600">
-                    {formatMoney(Number(tx.amount))}
+                  <p className="text-sm text-ink-600">
+                    <Money amount={Number(tx.amount)} size="sm" />
                     {tx.netAmount != null && tx.type === "RELEASE" && (
-                      <> · Net payout {formatMoney(Number(tx.netAmount))}</>
+                      <>
+                        {" "}
+                        · Net payout <Money amount={Number(tx.netAmount)} size="sm" tone="jade" />
+                      </>
                     )}
                     {tx.platformFee != null && Number(tx.platformFee) > 0 && (
-                      <> · Platform fee {formatMoney(Number(tx.platformFee))}</>
+                      <>
+                        {" "}
+                        · Platform fee{" "}
+                        <Money amount={Number(tx.platformFee)} size="sm" tone="muted" />
+                      </>
                     )}
                   </p>
-                  <p className="text-xs text-slate-400">{formatDateTime(tx.createdAt)}</p>
+                  <p className="text-xs text-ink-500">{formatDateTime(tx.createdAt)}</p>
                   <div className="flex flex-wrap gap-3 text-sm">
-                    <Link href={routes.contract(tx.contractId)} className="text-blue-600 hover:underline">
+                    <Link
+                      href={routes.contract(tx.contractId)}
+                      className="text-ochre-700 hover:underline"
+                    >
                       View contract
                     </Link>
                     {tx.receiptUrl && (
-                      <a href={tx.receiptUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <a
+                        href={tx.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-ochre-700 hover:underline"
+                      >
                         Receipt
                       </a>
                     )}

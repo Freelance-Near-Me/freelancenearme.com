@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { pushNotification } from "@/lib/in-app-notify";
+import { recomputeAndStoreJobSuccessScore, getJobSuccessScore } from "@/lib/job-success-score";
 
 const reviewSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
@@ -33,6 +34,10 @@ export async function getTalentRatingStats(talentId: string) {
     average: agg._avg.rating ?? 0,
     count: agg._count.rating,
   };
+}
+
+export async function getJobSuccessScoreForTalent(talentId: string) {
+  return getJobSuccessScore(talentId);
 }
 
 export async function getReviewForContract(contractId: string) {
@@ -88,4 +93,6 @@ export async function submitReview(contractId: string, formData: FormData) {
   revalidatePath(`/contracts/${contractId}`);
   if (talent) revalidatePath(`/freelancers/${talent.username}`);
   revalidatePath("/talents");
+
+  await recomputeAndStoreJobSuccessScore(contract.talentId);
 }

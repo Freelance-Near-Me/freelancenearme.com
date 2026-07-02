@@ -46,3 +46,12 @@ export async function getMySavedSearches() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function deleteSavedSearch(id: string) {
+  const user = await requireUser();
+  await prisma.savedSearch.deleteMany({
+    where: { id, userId: user.id },
+  });
+  revalidatePath("/saved-searches");
+  revalidatePath("/jobs");
+}

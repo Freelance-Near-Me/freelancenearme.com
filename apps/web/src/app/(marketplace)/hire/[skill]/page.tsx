@@ -60,6 +60,8 @@ export default async function HireBySkillPage({ params }: { params: Promise<{ sk
                   hourlyRate={t.talentProfile?.hourlyRate}
                   availability={t.talentProfile?.availability}
                   verified={t.talentProfile?.verified}
+                  verificationTier={t.talentProfile?.verificationTier}
+                  jobSuccessScore={t.talentProfile?.jobSuccessScore}
                   skills={t.talentProfile?.skills}
                   averageRating={averageRating}
                   reviewCount={reviewCount}
