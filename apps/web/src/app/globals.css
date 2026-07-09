@@ -18,6 +18,9 @@
   --color-jade-500: #25a578;
   --color-jade-700: #1a7a5a;
   --color-jade-100: #e8f5ef;
+  --color-eucalyptus-500: #1b5751;
+  --color-eucalyptus-700: #0f3b36;
+  --color-eucalyptus-100: #dcede8;
 }
 
 body {
@@ -267,4 +270,197 @@ body {
   transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
   z-index: 50;
   pointer-events: none;
+}
+
+/* Hero mesh background */
+.gradient-hero-mesh {
+  background:
+    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--color-ochre-500) 10%, transparent), transparent 45%),
+    radial-gradient(circle at 88% 80%, color-mix(in srgb, var(--color-eucalyptus-500) 8%, transparent), transparent 50%),
+    linear-gradient(180deg, var(--color-bone) 0%, var(--color-bone-50) 100%);
+  color: var(--color-ink-900);
+  position: relative;
+}
+
+.gradient-hero-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-ink-900) 3.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-ink-900) 3.5%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 35%, transparent 80%);
+}
+
+.gradient-hero-mesh > * {
+  position: relative;
+}
+
+/* Buttons & cards */
+.btn-elite {
+  @apply inline-flex items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200;
+  background: var(--color-ochre-500);
+  color: var(--color-ink-900);
+  border: 1px solid color-mix(in srgb, var(--color-ochre-700) 35%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-ochre-700) 30%, transparent),
+    0 8px 24px -12px color-mix(in srgb, var(--color-ochre-500) 55%, transparent);
+}
+
+.btn-elite:hover {
+  background: var(--color-ochre-700);
+  color: var(--color-bone);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200;
+  background: white;
+  color: var(--color-ink-900);
+  border: 1px solid color-mix(in srgb, var(--color-ink-900) 14%, transparent);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bone-50);
+  border-color: color-mix(in srgb, var(--color-ink-900) 22%, transparent);
+}
+
+.card-elite {
+  @apply rounded-xl bg-white p-6 transition-all duration-200;
+  border: 1px solid var(--color-bone-200);
+  box-shadow: 0 1px 0 var(--color-bone-200);
+}
+
+.card-elite:hover {
+  border-color: color-mix(in srgb, var(--color-ink-900) 18%, transparent);
+  box-shadow: 0 16px 32px -22px color-mix(in srgb, var(--color-ink-900) 22%, transparent);
+  transform: translateY(-1px);
+}
+
+.card-featured {
+  @apply rounded-2xl bg-white p-6 transition-all duration-200;
+  border: 1px solid var(--color-bone-200);
+  box-shadow: 0 1px 0 var(--color-bone-200);
+}
+
+.card-featured:hover {
+  border-color: color-mix(in srgb, var(--color-ochre-500) 45%, transparent);
+  box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--color-ink-900) 25%, transparent);
+  transform: translateY(-2px);
+}
+
+.shadow-soft {
+  box-shadow: 0 1px 0 var(--color-bone-200), 0 8px 24px -16px color-mix(in srgb, var(--color-ink-900) 12%, transparent);
+}
+
+.surface-eucalyptus {
+  background: var(--color-eucalyptus-700);
+  color: var(--color-bone);
+}
+
+.surface-cream {
+  background: var(--color-bone-50);
+  color: var(--color-ink-900);
+}
+
+/* Badges */
+.badge-elite {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+  background: var(--color-ochre-100);
+  color: var(--color-ochre-700);
+  border: 1px solid color-mix(in srgb, var(--color-ochre-500) 35%, transparent);
+}
+
+.badge-eucalyptus {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+  background: var(--color-eucalyptus-100);
+  color: var(--color-eucalyptus-700);
+  border: 1px solid color-mix(in srgb, var(--color-eucalyptus-500) 25%, transparent);
+}
+
+.badge-success {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+  background: color-mix(in srgb, var(--color-jade-500) 12%, transparent);
+  color: var(--color-jade-700);
+  border: 1px solid color-mix(in srgb, var(--color-jade-500) 35%, transparent);
+}
+
+/* Portrait wall */
+.portrait-card {
+  position: relative;
+  background: white;
+  border: 1px solid var(--color-bone-200);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.portrait-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--color-ochre-500) 55%, transparent);
+  box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--color-ink-900) 25%, transparent);
+}
+
+.portrait-stamp {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--color-ochre-100);
+  color: var(--color-ochre-700);
+  border: 1px solid color-mix(in srgb, var(--color-ochre-500) 55%, transparent);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transform: rotate(-8deg);
+  font-family: var(--font-serif);
+}
+
+/* Timezone band */
+.tz-band {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.tz-cell {
+  height: 28px;
+  border-radius: 4px;
+  background: var(--color-bone-200);
+}
+
+.tz-cell.business {
+  background: color-mix(in srgb, var(--color-ink-900) 18%, transparent);
+}
+
+.tz-cell.now {
+  background: var(--color-ochre-500);
+  animation: tickPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tickPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+.container-narrow {
+  @apply mx-auto max-w-[860px] px-5 sm:px-6;
+}
+
+.text-eucalyptus {
+  color: var(--color-eucalyptus-500);
+}
+
+.text-eucalyptus-deep {
+  color: var(--color-eucalyptus-700);
 }

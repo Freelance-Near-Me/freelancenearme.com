@@ -4,9 +4,9 @@ import { routes } from "@/lib/routes";
 const footerLinks = {
   hire: [
     { label: "Find talent", href: routes.talents },
-    { label: "Post a job", href: routes.postJob },
+    { label: "Post a project", href: routes.postJob },
     { label: "How it works", href: "/how-it-works" },
-    { label: "Categories", href: routes.categories },
+    { label: "Trust centre", href: "/trust" },
   ],
   work: [
     { label: "Browse jobs", href: routes.jobs },
@@ -34,10 +34,10 @@ export function SiteFooter() {
     <footer className="surface-paper mt-auto border-t border-bone-200">
       <div className="container-elite py-16">
         <div className="mb-14 max-w-3xl">
-          <p className="eyebrow mb-3">Verified profiles, escrow milestones</p>
+          <p className="eyebrow mb-3">Verified humans, not anonymous résumés</p>
           <p className="font-serif text-balance text-[28px] leading-[1.15] tracking-tight text-ink-900 md:text-[34px]">
-            The person you brief is the person who delivers. Fund work in escrow,
-            review proposals, and pay only for milestones you accept.
+            The person you brief is the person who delivers. Fund work in escrow, interview
+            before you hire, and meet in person if it matters.
           </p>
         </div>
 
@@ -50,8 +50,8 @@ export function SiteFooter() {
               Freelance Near Me
             </Link>
             <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-ink-500">
-              A modern marketplace for hiring freelancers locally or remotely.
-              Post jobs, review proposals, and manage contracts in one place.
+              The marketplace for clients who want to interview a real human, fund work in
+              escrow, and hire verified freelancers in US-friendly time zones.
             </p>
           </div>
 

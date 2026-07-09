@@ -9,9 +9,9 @@ import { routes } from "@/lib/routes";
 import { ButtonLink } from "@/components/ui/button";
 
 const publicLinks = [
-  { href: routes.jobs, label: "Jobs" },
-  { href: routes.talents, label: "Talent" },
-  { href: routes.categories, label: "Categories" },
+  { href: routes.talents, label: "Find talent" },
+  { href: routes.jobs, label: "Find work" },
+  { href: "/trust", label: "Trust" },
   { href: "/how-it-works", label: "How it works" },
 ];
 
@@ -71,8 +71,11 @@ export async function SiteHeader() {
                 >
                   Log in
                 </Link>
+                <ButtonLink href={routes.talents} variant="quiet" className="hidden sm:inline-flex">
+                  Browse talent
+                </ButtonLink>
                 <ButtonLink href={routes.signUp("client")} variant="ink">
-                  Get started
+                  Post a project
                 </ButtonLink>
               </Show>
               <Show when="signed-in">

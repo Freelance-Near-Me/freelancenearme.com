@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 import { routes } from "@/lib/routes";
 
+export const dynamic = "force-dynamic";
+
 export default async function OnboardingPage({
   searchParams,
 }: {
@@ -26,7 +28,7 @@ export default async function OnboardingPage({
       width="md"
     >
       <form action={completeOnboarding} className="space-y-4">
-        <fieldset className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
+        <fieldset className="grid grid-cols-2 gap-2 rounded-xl bg-bone-50 p-1">
           <label className="cursor-pointer">
             <input
               type="radio"
@@ -35,7 +37,7 @@ export default async function OnboardingPage({
               defaultChecked={defaultRole === "client"}
               className="peer sr-only"
             />
-            <span className="block rounded-lg py-2.5 text-center text-sm font-semibold text-slate-600 transition peer-checked:bg-white peer-checked:text-blue-700 peer-checked:shadow-sm">
+            <span className="block rounded-lg py-2.5 text-center text-sm font-semibold text-ink-600 transition peer-checked:bg-white peer-checked:text-ochre-700 peer-checked:shadow-sm">
               Hire talent
             </span>
           </label>
@@ -47,7 +49,7 @@ export default async function OnboardingPage({
               defaultChecked={defaultRole === "talent"}
               className="peer sr-only"
             />
-            <span className="block rounded-lg py-2.5 text-center text-sm font-semibold text-slate-600 transition peer-checked:bg-white peer-checked:text-blue-700 peer-checked:shadow-sm">
+            <span className="block rounded-lg py-2.5 text-center text-sm font-semibold text-ink-600 transition peer-checked:bg-white peer-checked:text-ochre-700 peer-checked:shadow-sm">
               Find work
             </span>
           </label>

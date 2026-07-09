@@ -4,6 +4,17 @@ import { redirect } from "next/navigation";
 import { upsertUserFromClerk, type ClerkUserPayload } from "@/lib/clerk-sync";
 import { isClerkConfigured, isDatabaseConfigured, isDevAuthBypass } from "@/lib/env";
 
+/**
+ * Next.js signals control flow (redirects, notFound, dynamic rendering) by
+ * throwing errors carrying a `digest`. These must bubble up, not be caught by
+ * our own try/catch, otherwise the framework can't detect dynamic usage and we
+ * emit misleading "session lookup failed" logs.
+ */
+function isNextControlFlowError(error: unknown): boolean {
+  const digest = (error as { digest?: unknown } | null)?.digest;
+  return typeof digest === "string";
+}
+
 export async function getCurrentUser(): Promise<User | null> {
   if (!isDatabaseConfigured()) return null;
 
@@ -29,6 +40,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
     return syncUserFromClerk();
   } catch (error) {
+    if (isNextControlFlowError(error)) throw error;
     console.error("[auth] Clerk session lookup failed", error);
     return null;
   }
