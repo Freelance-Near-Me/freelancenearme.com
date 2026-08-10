@@ -1,0 +1,33 @@
+# Local dev services for the FreelanceNearMe (Mercur/Medusa) backend.
+# NOTE: the Mercur `basic` template does NOT ship a compose file — this was added in Phase 1.
+# Start with:  docker compose up -d
+# Then point packages/api/.env DATABASE_URL / REDIS_URL at these services.
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: fnm
+      POSTGRES_PASSWORD: fnm_dev_password
+      POSTGRES_DB: freelancenearme_platform
+    volumes:
+      - fnm_platform_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fnm -d freelancenearme_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  fnm_platform_pg:
