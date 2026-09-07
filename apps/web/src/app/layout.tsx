@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Fraunces, Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getClerkPublishableKey, isClerkConfigured } from "@/lib/env-clerk";
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : (
           inner
         )}
+        <SpeedInsights />
       </body>
     </html>
   );
