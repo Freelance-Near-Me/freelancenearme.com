@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { listTalents } from "@/actions/talents";
 import { TalentCard } from "@/components/talent-card";
 import { TalentFilters } from "@/components/talent-filters";
@@ -6,6 +7,12 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { routes } from "@/lib/routes";
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Find talent",
+  description:
+    "Search freelancers who have confirmed their email and finished payout setup. Filter by ZIP code, city, skill, and rate.",
+};
 
 export default async function TalentsPage({
   searchParams,
@@ -24,7 +31,11 @@ export default async function TalentsPage({
   });
 
   return (
-    <PageShell title="Find talent" description="Verified freelancers on the platform" width="full">
+    <PageShell
+      title="Find talent"
+      description="Freelancers who have confirmed their email and finished payout setup"
+      width="full"
+    >
       <TalentFilters searchParams={sp} />
 
       <p className="mt-6 text-sm text-slate-500">
@@ -34,9 +45,21 @@ export default async function TalentsPage({
       {talents.length === 0 ? (
         <div className="mt-8">
           <EmptyState
-            title="No talent matches your filters"
-            description="Try broadening your search or browse all freelancers."
-            action={{ label: "View all talent", href: routes.talents }}
+            title={
+              sp.q || sp.skill || sp.availability || sp.minRate || sp.maxRate || sp.nearPostcode
+                ? "No talent matches your filters"
+                : "No freelancers to show yet"
+            }
+            description={
+              sp.q || sp.skill || sp.availability || sp.minRate || sp.maxRate || sp.nearPostcode
+                ? "Try a wider radius, another city, or clear the filters."
+                : "Freelancers appear here after they confirm their email and finish payout setup. Example cards on the homepage are not real profiles."
+            }
+            action={
+              sp.q || sp.skill || sp.availability || sp.minRate || sp.maxRate || sp.nearPostcode
+                ? { label: "View all talent", href: routes.talents }
+                : { label: "How checks work", href: "/trust" }
+            }
           />
         </div>
       ) : (

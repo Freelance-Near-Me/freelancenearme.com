@@ -103,7 +103,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     userId: milestone.contract.talentId,
     type: NotificationType.MILESTONE,
     title: "Milestone funded",
-    body: `${milestone.title} — ${formatMoney(Number(milestone.amount))} in escrow`,
+    body: `${milestone.title} — ${formatMoney(Number(milestone.amount))} held until you approve`,
     href: `/contracts/${milestone.contractId}`,
   });
 }

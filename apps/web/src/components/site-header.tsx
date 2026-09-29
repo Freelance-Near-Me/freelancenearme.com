@@ -61,7 +61,47 @@ export async function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <details className="relative md:hidden">
+          <summary className="cursor-pointer list-none rounded-lg border border-bone-200 px-3 py-1.5 text-sm font-medium text-ink-700 [&::-webkit-details-marker]:hidden">
+            Menu
+          </summary>
+          <div className="absolute right-0 z-50 mt-2 flex w-56 flex-col gap-2 rounded-xl border border-bone-200 bg-white p-3 shadow-lg">
+            {publicLinks.map((l) => (
+              <Link key={l.href} href={l.href} className="text-sm font-medium text-ink-700">
+                {l.label}
+              </Link>
+            ))}
+            {hasClerk ? (
+              <>
+                <Show when="signed-out">
+                  <Link href={routes.signIn} className="text-sm font-medium text-ink-700">
+                    Log in
+                  </Link>
+                  <ButtonLink href={routes.signUp("client")} variant="ink">
+                    Post a project
+                  </ButtonLink>
+                </Show>
+                <Show when="signed-in">
+                  <Link href={routes.inbox} className="text-sm font-medium text-ink-700">
+                    Inbox
+                  </Link>
+                  <Link href={routes.notifications} className="text-sm font-medium text-ink-700">
+                    Alerts
+                  </Link>
+                  <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
+                    Dashboard
+                  </Link>
+                </Show>
+              </>
+            ) : (
+              <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
+                Dashboard
+              </Link>
+            )}
+          </div>
+        </details>
+
+        <div className="hidden items-center gap-2 md:flex md:gap-3">
           {hasClerk ? (
             <>
               <Show when="signed-out">

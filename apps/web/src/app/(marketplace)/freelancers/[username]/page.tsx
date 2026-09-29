@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTalentByUsername } from "@/actions/profile";
@@ -12,6 +13,22 @@ import { Money } from "@/components/money/money";
 import { routes } from "@/lib/routes";
 
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const talent = await getTalentByUsername(username);
+  if (!talent) return { title: "Freelancer not found" };
+  const name = `${talent.firstName} ${talent.lastName}`;
+  const description =
+    talent.talentProfile?.headline ??
+    talent.talentProfile?.bio?.slice(0, 160) ??
+    `${name} on Freelance Near Me.`;
+  return { title: name, description, openGraph: { title: name, description } };
+}
 
 export default async function FreelancerProfilePage({
   params,

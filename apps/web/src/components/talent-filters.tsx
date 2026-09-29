@@ -60,8 +60,8 @@ export async function TalentFilters({ searchParams }: TalentFiltersProps) {
         </label>
 
         <label className="block text-sm">
-          <span className="font-medium text-slate-700">Near postcode</span>
-          <Input name="nearPostcode" defaultValue={sp.nearPostcode} placeholder="e.g. M1 1AA" className="mt-1 bg-white" />
+          <span className="font-medium text-slate-700">ZIP code or city</span>
+          <Input name="nearPostcode" defaultValue={sp.nearPostcode} placeholder="e.g. 10001 or Austin" className="mt-1 bg-white" />
         </label>
 
         <label className="block text-sm">

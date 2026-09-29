@@ -43,12 +43,12 @@ export function WaitlistForm({
         <Input name="email" type="email" required className="mt-1 bg-white" placeholder="you@example.com" />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Postcode</span>
+        <span className="font-medium text-slate-700">ZIP code</span>
         <Input
           name="postcode"
           defaultValue={defaultPostcode}
           className="mt-1 bg-white"
-          placeholder="e.g. M1 1AA"
+          placeholder="e.g. 10001"
         />
       </label>
       <fieldset className="flex gap-4 text-sm">

@@ -80,9 +80,8 @@ export function TimezoneBand() {
       </div>
 
       <p className="mt-4 text-[13px] leading-relaxed text-ink-700">
-        Every freelancer here works{" "}
-        <span className="font-semibold text-ink-900">ET-friendly hours</span>. No 3 a.m.
-        Slack replies waiting on Manila or Manhattan, no overnight blockers.
+        Eastern Time, for clients hiring in the United States. Search by ZIP code or city
+        when you want someone local.
       </p>
     </div>
   );

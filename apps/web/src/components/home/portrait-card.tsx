@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Clock, MapPin, ShieldCheck, Video } from "lucide-react";
+import { CheckCircle2, MapPin, Video } from "lucide-react";
 import { VerificationTier } from "@fnm/database";
 import { routes } from "@/lib/routes";
 
@@ -13,6 +13,7 @@ export type PortraitTalent = {
   avatarUrl?: string | null;
   verificationTier?: VerificationTier | null;
   verified?: boolean;
+  example?: boolean;
 };
 
 function initials(first?: string, last?: string) {
@@ -24,12 +25,11 @@ function locationLabel(talent: PortraitTalent) {
 }
 
 export function PortraitCard({ talent }: { talent: PortraitTalent }) {
-  const tier = talent.verificationTier;
+  const tier = talent.example ? null : talent.verificationTier;
   const isTop = tier === VerificationTier.TOP_RATED;
   const isVerified =
-    tier === VerificationTier.VERIFIED ||
-    tier === VerificationTier.TOP_RATED ||
-    talent.verified;
+    !talent.example &&
+    (tier === VerificationTier.VERIFIED || tier === VerificationTier.TOP_RATED || talent.verified);
   const stamp = isTop ? "VH+" : isVerified ? "VH" : null;
 
   const inner = (
@@ -64,16 +64,13 @@ export function PortraitCard({ talent }: { talent: PortraitTalent }) {
           <MapPin className="h-3.5 w-3.5 text-ink-500" aria-hidden />
           {locationLabel(talent)}
         </span>
-        <span className="inline-flex items-center gap-1">
-          <Clock className="h-3.5 w-3.5 text-ink-500" aria-hidden />
-          ET-friendly hours
-        </span>
       </div>
 
       <div className="flex flex-wrap gap-1.5 pt-1">
+        {talent.example && <span className="badge-elite">Example</span>}
         {isVerified && (
           <span className="badge-eucalyptus">
-            <ShieldCheck className="h-3 w-3" aria-hidden /> ID verified
+            <CheckCircle2 className="h-3 w-3" aria-hidden /> Payouts set up
           </span>
         )}
         {isTop && (

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Categories",
+  description: "Browse freelance jobs and skills by category on Freelance Near Me.",
+};
 import { listCategories } from "@/actions/categories";
 import { PageShell } from "@/components/layout/page-shell";
 import { routes } from "@/lib/routes";

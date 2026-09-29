@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCategoryBySlug } from "@/actions/categories";
+import { canonicalCategorySlug } from "@/lib/listing-visibility";
 import { listOpenJobs } from "@/actions/jobs";
 import { JobCard } from "@/components/job-card";
 import { PageShell } from "@/components/layout/page-shell";
@@ -31,6 +32,8 @@ export async function generateMetadata({
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const canonical = canonicalCategorySlug(slug);
+  if (canonical !== slug) redirect(`/categories/${canonical}`);
   const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 

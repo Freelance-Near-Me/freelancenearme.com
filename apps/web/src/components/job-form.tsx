@@ -89,10 +89,13 @@ export function JobForm({
         <Select name="environment" label="Environment" options={["REMOTE", "ONSITE", "HYBRID"]} defaultValue={d.environment} />
         <Select name="experienceLevel" label="Experience" options={["ENTRY", "INTERMEDIATE", "EXPERT"]} defaultValue={d.experienceLevel} />
       </div>
+      <p className="text-xs text-ink-500">
+        Fixed is a project total or a monthly amount. Hourly is the rate per hour.
+      </p>
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block text-sm">
-          <span className="font-medium">Postcode</span>
-          <input name="postcode" defaultValue={d.postcode} placeholder="e.g. M1 1AA" className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+          <span className="font-medium">ZIP code</span>
+          <input name="postcode" defaultValue={d.postcode} placeholder="e.g. 10001" className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
         </label>
         <label className="block text-sm">
           <span className="font-medium">City</span>

@@ -13,8 +13,12 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Freelance Near Me",
-  description: "Hire freelancers near you — or anywhere. Post jobs, receive proposals, and manage contracts.",
+  title: {
+    default: "Freelance Near Me",
+    template: "%s · Freelance Near Me",
+  },
+  description:
+    "Hire freelancers in the US by city or ZIP code. Email and payout checks before hire. Milestone payments stay held until you approve the work.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

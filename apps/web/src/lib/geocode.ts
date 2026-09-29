@@ -5,33 +5,71 @@ export type GeoPoint = {
   country?: string;
 };
 
+const US_ZIP = /^\d{5}(?:-\d{4})?$/;
+const UK_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+
 /** Normalise UK postcodes for lookup. */
 function normalisePostcode(postcode: string): string {
   return postcode.trim().toUpperCase().replace(/\s+/g, " ");
 }
 
+export function isUsZip(value: string): boolean {
+  return US_ZIP.test(value.trim());
+}
+
 /**
- * Resolve coordinates from a UK postcode (postcodes.io) or city/country (Nominatim).
- * Returns null when lookup fails; callers should still save text location.
+ * Resolve coordinates from a US ZIP code, a UK postcode, or a city name.
+ * Returns null when lookup fails; callers should still save the text location.
  */
 export async function geocodeLocation(input: {
   postcode?: string | null;
   city?: string | null;
   country?: string | null;
 }): Promise<GeoPoint | null> {
-  const postcode = input.postcode?.trim();
-  if (postcode) {
-    const uk = await geocodeUkPostcode(postcode);
-    if (uk) return uk;
+  const country = input.country?.trim() || "United States";
+  const code = input.postcode?.trim();
+  if (code) {
+    if (isUsZip(code)) {
+      const us = await geocodeUsZip(code);
+      if (us) return us;
+    }
+    if (UK_POSTCODE.test(code)) {
+      const uk = await geocodeUkPostcode(code);
+      if (uk) return uk;
+    }
+    const asPlace = await geocodeNominatim(`${code}, ${country}`);
+    if (asPlace) return asPlace;
   }
 
   const city = input.city?.trim();
-  const country = input.country?.trim() || "United Kingdom";
   if (city) {
     return geocodeNominatim(`${city}, ${country}`);
   }
 
   return null;
+}
+
+async function geocodeUsZip(zip: string): Promise<GeoPoint | null> {
+  try {
+    const digits = zip.trim().slice(0, 5);
+    const res = await fetch(`https://api.zippopotam.us/us/${digits}`, {
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      places?: { latitude: string; longitude: string; "place name"?: string; "state abbreviation"?: string }[];
+    };
+    const place = data.places?.[0];
+    if (!place) return null;
+    return {
+      latitude: Number(place.latitude),
+      longitude: Number(place.longitude),
+      city: place["place name"],
+      country: "United States",
+    };
+  } catch {
+    return null;
+  }
 }
 
 async function geocodeUkPostcode(postcode: string): Promise<GeoPoint | null> {

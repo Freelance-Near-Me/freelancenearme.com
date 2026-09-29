@@ -44,7 +44,7 @@ export function TalentCard({
   postcode,
   distanceMiles,
 }: TalentCardProps) {
-  const location = [postcode, city].filter(Boolean).join(", ");
+  const location = [city, postcode].filter(Boolean).join(", ");
   const tier =
     verificationTier ??
     (verified ? VerificationTier.VERIFIED : VerificationTier.UNVERIFIED);

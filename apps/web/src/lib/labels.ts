@@ -2,7 +2,7 @@ import { ContractStatus, MilestoneStatus, ProposalStatus } from "@fnm/database";
 
 export const MILESTONE_STATUS_LABEL: Record<MilestoneStatus, string> = {
   PENDING: "Awaiting payment",
-  FUNDED: "Funded — in escrow",
+  FUNDED: "Funded — held until you approve",
   SUBMITTED: "Work submitted",
   APPROVED: "Approved",
   PAID: "Paid out",

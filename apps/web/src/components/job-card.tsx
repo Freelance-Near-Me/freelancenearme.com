@@ -64,7 +64,7 @@ export function JobCard({
   location: jobLocation,
   distanceMiles,
 }: JobCardProps) {
-  const locationText = [jobLocation?.postcode, jobLocation?.city, jobLocation?.country]
+  const locationText = [jobLocation?.city, jobLocation?.country, jobLocation?.postcode]
     .filter(Boolean)
     .join(", ");
 

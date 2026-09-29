@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 
+export { platformFeePercent } from "@/lib/fees";
+
 let stripeClient: Stripe | null = null;
 
 export function getStripe(): Stripe {
@@ -13,11 +15,6 @@ export function getStripe(): Stripe {
 
 export function isStripeConfigured() {
   return Boolean(process.env.STRIPE_SECRET_KEY);
-}
-
-export function platformFeePercent(): number {
-  const n = Number(process.env.PLATFORM_FEE_PERCENT ?? "10");
-  return Number.isFinite(n) && n >= 0 && n <= 50 ? n : 10;
 }
 
 export function appUrl(path = "") {

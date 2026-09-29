@@ -14,7 +14,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole, requireUser } from "@/lib/auth";
 import { safeDbQuery } from "@/lib/db-safe";
-import { geocodeLocation, distanceMiles } from "@/lib/geocode";
+import { geocodeLocation } from "@/lib/geocode";
+import { publicOpenJobWhere, slugsForCategory } from "@/lib/listing-visibility";
+import { applyNearFilter } from "@/lib/near-filter";
 import { uniqueSlug } from "@/lib/slug";
 
 const jobSchema = z.object({
@@ -189,7 +191,7 @@ function buildJobWhere(filters: JobFilters = {}): Prisma.JobWhereInput {
     filters;
 
   return {
-    status: JobStatus.OPEN,
+    ...publicOpenJobWhere(),
     ...(q
       ? {
           OR: [
@@ -198,7 +200,7 @@ function buildJobWhere(filters: JobFilters = {}): Prisma.JobWhereInput {
           ],
         }
       : {}),
-    ...(category ? { category: { slug: category } } : {}),
+    ...(category ? { category: { slug: { in: slugsForCategory(category) } } } : {}),
     ...(environment ? { environment } : {}),
     ...(billingMode ? { billingMode } : {}),
     ...(experienceLevel ? { experienceLevel } : {}),
@@ -233,28 +235,7 @@ export async function listOpenJobs(filters: JobFilters | string = {}) {
     []
   );
 
-  if (!resolved.nearPostcode || !resolved.radiusMiles) {
-    return jobs.map((job) => ({ ...job, distanceMiles: undefined as number | undefined }));
-  }
-
-  const origin = await geocodeLocation({ postcode: resolved.nearPostcode, country: "United Kingdom" });
-  if (!origin) {
-    return jobs.map((job) => ({ ...job, distanceMiles: undefined as number | undefined }));
-  }
-
-  const withDistance = jobs
-    .filter((job) => job.latitude != null && job.longitude != null)
-    .map((job) => ({
-      ...job,
-      distanceMiles: distanceMiles(
-        { latitude: origin.latitude, longitude: origin.longitude },
-        { latitude: job.latitude!, longitude: job.longitude! }
-      ),
-    }))
-    .filter((job) => job.distanceMiles <= resolved.radiusMiles!)
-    .sort((a, b) => a.distanceMiles - b.distanceMiles);
-
-  return withDistance;
+  return applyNearFilter(jobs, resolved.nearPostcode, resolved.radiusMiles);
 }
 
 export async function getJobBySlug(slug: string) {

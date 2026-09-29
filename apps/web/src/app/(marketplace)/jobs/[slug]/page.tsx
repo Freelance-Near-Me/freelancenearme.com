@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JobStatus, UserRole } from "@fnm/database";
@@ -10,6 +11,22 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 import { formatBudgetRange } from "@/lib/format";
 import { routes } from "@/lib/routes";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const job = await getJobBySlug(slug);
+  if (!job) return { title: "Job not found" };
+  const description = job.description.replace(/\s+/g, " ").trim().slice(0, 160);
+  return {
+    title: job.title,
+    description,
+    openGraph: { title: job.title, description },
+  };
+}
 
 export default async function JobDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -56,7 +73,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
         {(job.postcode || job.city) && (
           <>
             <span>·</span>
-            <span>{[job.postcode, job.city, job.country].filter(Boolean).join(", ")}</span>
+            <span>{[job.city, job.country, job.postcode].filter(Boolean).join(", ")}</span>
           </>
         )}
       </div>

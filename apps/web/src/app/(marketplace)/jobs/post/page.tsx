@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { UserRole } from "@fnm/database";
+
+export const metadata: Metadata = {
+  title: "Post a project",
+  description: "Post a freelance job with a budget, a ZIP code or city, and whether the work is local or remote.",
+};
 import { listCategories } from "@/actions/categories";
 import { createJob } from "@/actions/jobs";
 import { listSkills } from "@/actions/skills";

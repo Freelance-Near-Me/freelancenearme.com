@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { platformFeePercent } from "@/lib/fees";
 import { routes } from "@/lib/routes";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/site";
 
 const footerLinks = {
   hire: [
@@ -34,10 +36,10 @@ export function SiteFooter() {
     <footer className="surface-paper mt-auto border-t border-bone-200">
       <div className="container-elite py-16">
         <div className="mb-14 max-w-3xl">
-          <p className="eyebrow mb-3">Verified humans, not anonymous résumés</p>
+          <p className="eyebrow mb-3">Search by city or ZIP code</p>
           <p className="font-serif text-balance text-[28px] leading-[1.15] tracking-tight text-ink-900 md:text-[34px]">
-            The person you brief is the person who delivers. Fund work in escrow, interview
-            before you hire, and meet in person if it matters.
+            Search by ZIP code or city, interview before you hire, and keep payment held until
+            you approve the work.
           </p>
         </div>
 
@@ -50,8 +52,8 @@ export function SiteFooter() {
               Freelance Near Me
             </Link>
             <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-ink-500">
-              The marketplace for clients who want to interview a real human, fund work in
-              escrow, and hire verified freelancers in US-friendly time zones.
+              A US marketplace for hiring freelancers by city or ZIP code. Platform fee{" "}
+              {platformFeePercent()}% when a milestone is released.
             </p>
           </div>
 
@@ -81,7 +83,10 @@ export function SiteFooter() {
 
         <div className="flex flex-col items-start justify-between gap-4 border-t border-bone-200 pt-8 sm:flex-row sm:items-center">
           <p className="text-xs text-ink-500">
-            © {year} Freelance Near Me. All rights reserved.
+            © {year} Freelance Near Me.{" "}
+            <a href={SUPPORT_MAILTO} className="hover:text-ink-900">
+              {SUPPORT_EMAIL}
+            </a>
           </p>
           <div className="flex gap-6">
             {footerLinks.legal.map((item) => (

@@ -2,7 +2,8 @@
 
 import { prisma, UserRole } from "@fnm/database";
 import { safeDbQuery } from "@/lib/db-safe";
-import { geocodeLocation, distanceMiles } from "@/lib/geocode";
+import { DEMO_EMAIL_SUFFIX, hideDemoListings } from "@/lib/listing-visibility";
+import { applyNearFilter } from "@/lib/near-filter";
 
 export type TalentFilters = {
   q?: string;
@@ -22,6 +23,7 @@ export async function listTalents(filters: TalentFilters = {}) {
       prisma.user.findMany({
         where: {
           role: UserRole.TALENT,
+          ...(hideDemoListings() ? { NOT: { email: { endsWith: DEMO_EMAIL_SUFFIX } } } : {}),
           talentProfile: {
             is: {
               verified: true,
@@ -69,26 +71,7 @@ export async function listTalents(filters: TalentFilters = {}) {
     []
   );
 
-  if (!filters.nearPostcode || !filters.radiusMiles) {
-    return talents.map((t) => ({ ...t, distanceMiles: undefined as number | undefined }));
-  }
-
-  const origin = await geocodeLocation({ postcode: filters.nearPostcode, country: "United Kingdom" });
-  if (!origin) {
-    return talents.map((t) => ({ ...t, distanceMiles: undefined as number | undefined }));
-  }
-
-  return talents
-    .filter((t) => t.latitude != null && t.longitude != null)
-    .map((t) => ({
-      ...t,
-      distanceMiles: distanceMiles(
-        { latitude: origin.latitude, longitude: origin.longitude },
-        { latitude: t.latitude!, longitude: t.longitude! }
-      ),
-    }))
-    .filter((t) => t.distanceMiles <= filters.radiusMiles!)
-    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+  return applyNearFilter(talents, filters.nearPostcode, filters.radiusMiles);
 }
 
 export async function getTalentsBySkillSlug(skillSlug: string) {

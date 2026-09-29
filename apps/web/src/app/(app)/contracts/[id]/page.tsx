@@ -72,7 +72,7 @@ export default async function ContractPage({
     >
       {funded === "1" && (
         <Alert variant="success" className="mb-6">
-          Payment received — milestone is funded and held in escrow.
+          Payment received — the milestone is funded and held until you approve the work.
         </Alert>
       )}
 

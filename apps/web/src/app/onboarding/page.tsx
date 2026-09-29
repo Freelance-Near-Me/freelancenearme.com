@@ -59,8 +59,8 @@ export default async function OnboardingPage({
           <Field label="Last name" name="lastName" required />
         </div>
         <Field label="Username" name="username" required placeholder="your-name" />
-        <Field label="Postcode" name="postcode" placeholder="e.g. SW1A 1AA" />
-        <Field label="Country" name="country" placeholder="United Kingdom" />
+        <Field label="ZIP code" name="postcode" placeholder="e.g. 10001" />
+        <Field label="Country" name="country" placeholder="United States" />
         <Field label="City" name="city" />
         <Field label="Company (optional)" name="companyName" />
         <Field label="Headline (talent)" name="headline" placeholder="e.g. Full-stack developer" />

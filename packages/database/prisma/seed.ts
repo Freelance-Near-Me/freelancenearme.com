@@ -132,10 +132,11 @@ async function main() {
     },
     {
       title: "Monthly SEO retainer for local brand",
-      description: "Technical audits, content briefs, and rank tracking for 15 cities.",
+      description:
+        "Monthly retainer: technical audits, content briefs, and rank tracking for 15 cities. Budget is per month, not per hour.",
       budgetMin: 800,
       budgetMax: 1200,
-      billingMode: BillingMode.HOURLY,
+      billingMode: BillingMode.FIXED,
       featured: false,
       urgent: true,
       categoryId: marketingCat.id,
@@ -175,6 +176,8 @@ async function main() {
         featured: j.featured,
         urgent: j.urgent,
         categoryId: j.categoryId,
+        billingMode: j.billingMode,
+        description: j.description,
       },
     });
   }
@@ -224,28 +227,13 @@ async function main() {
     });
   }
 
-  await prisma.proofClient.deleteMany({});
-  await prisma.proofClient.createMany({
-    data: [
-      { name: "Stripe", permissionGranted: true, active: true, sortOrder: 0 },
-      { name: "Notion", permissionGranted: true, active: true, sortOrder: 1 },
-      { name: "Linear", permissionGranted: true, active: true, sortOrder: 2 },
-      { name: "Vercel", permissionGranted: true, active: true, sortOrder: 3 },
-    ],
-  });
-
-  await prisma.proofTestimonial.deleteMany({});
-  await prisma.proofTestimonial.create({
-    data: {
-      quote:
-        "We replaced two agencies with three freelancers from the platform. Six weeks to launch, fixed-price milestones, no surprise invoices. We reviewed all proposals before anyone started.",
-      authorName: "Jordan Lee",
-      authorTitle: "VP Product, fintech",
-      authorInitials: "JL",
-      approved: true,
-      featured: true,
-      sortOrder: 0,
+  await prisma.proofClient.deleteMany({
+    where: {
+      name: { in: ["Stripe", "Notion", "Linear", "Vercel", "Canva", "Atlassian", "Afterpay", "Culture Amp", "SafetyCulture", "Linktree"] },
     },
+  });
+  await prisma.proofTestimonial.deleteMany({
+    where: { authorName: { in: ["Jordan Lee", "Jess Suthar"] } },
   });
 
   console.log("Seed complete.");
