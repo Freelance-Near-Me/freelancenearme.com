@@ -1,6 +1,10 @@
 import { listSkills } from "@/actions/skills";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Separator } from "@/components/ui/separator";
 import { routes } from "@/lib/routes";
 
 type TalentFiltersProps = {
@@ -12,76 +16,116 @@ export async function TalentFilters({ searchParams }: TalentFiltersProps) {
   const sp = searchParams;
 
   return (
-    <form method="get" className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Input name="q" defaultValue={sp.q} placeholder="Search by name or headline…" className="flex-1 bg-white" />
-        <Button type="submit">Search</Button>
-      </div>
+    <Card className="bg-bone-50/80 shadow-soft">
+      <CardContent className="space-y-5">
+        <form method="get" className="space-y-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1 space-y-1.5">
+              <Label htmlFor="talent-q">Search</Label>
+              <Input
+                id="talent-q"
+                name="q"
+                defaultValue={sp.q}
+                placeholder="Search by name or headline…"
+                className="bg-white"
+              />
+            </div>
+            <Button type="submit" variant="ink">
+              Search
+            </Button>
+          </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">Skill</span>
-          <select
-            name="skill"
-            defaultValue={sp.skill ?? ""}
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
-          >
-            <option value="">Any skill</option>
-            {skills.map((s) => (
-              <option key={s.id} value={s.slug}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Separator />
 
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">Availability</span>
-          <select
-            name="availability"
-            defaultValue={sp.availability ?? ""}
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
-          >
-            <option value="">Any</option>
-            <option value="open">Available</option>
-            <option value="limited">Limited</option>
-            <option value="unavailable">Unavailable</option>
-          </select>
-        </label>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="talent-skill">Skill</Label>
+              <NativeSelect
+                id="talent-skill"
+                name="skill"
+                defaultValue={sp.skill ?? ""}
+                className="bg-white"
+              >
+                <option value="">Any skill</option>
+                {skills.map((s) => (
+                  <option key={s.id} value={s.slug}>
+                    {s.name}
+                  </option>
+                ))}
+              </NativeSelect>
+            </div>
 
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">Min rate ($/hr)</span>
-          <Input name="minRate" type="number" min={0} defaultValue={sp.minRate} className="mt-1 bg-white" />
-        </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="talent-availability">Availability</Label>
+              <NativeSelect
+                id="talent-availability"
+                name="availability"
+                defaultValue={sp.availability ?? ""}
+                className="bg-white"
+              >
+                <option value="">Any</option>
+                <option value="open">Available</option>
+                <option value="limited">Limited</option>
+                <option value="unavailable">Unavailable</option>
+              </NativeSelect>
+            </div>
 
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">Max rate ($/hr)</span>
-          <Input name="maxRate" type="number" min={0} defaultValue={sp.maxRate} className="mt-1 bg-white" />
-        </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="minRate">Min rate ($/hr)</Label>
+              <Input
+                id="minRate"
+                name="minRate"
+                type="number"
+                min={0}
+                defaultValue={sp.minRate}
+                className="bg-white"
+              />
+            </div>
 
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">ZIP code or city</span>
-          <Input name="nearPostcode" defaultValue={sp.nearPostcode} placeholder="e.g. 10001 or Austin" className="mt-1 bg-white" />
-        </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="maxRate">Max rate ($/hr)</Label>
+              <Input
+                id="maxRate"
+                name="maxRate"
+                type="number"
+                min={0}
+                defaultValue={sp.maxRate}
+                className="bg-white"
+              />
+            </div>
 
-        <label className="block text-sm">
-          <span className="font-medium text-slate-700">Radius</span>
-          <select
-            name="radiusMiles"
-            defaultValue={sp.radiusMiles ?? ""}
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
-          >
-            <option value="">Any distance</option>
-            <option value="10">Within 10 miles</option>
-            <option value="25">Within 25 miles</option>
-            <option value="50">Within 50 miles</option>
-          </select>
-        </label>
-      </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="talent-near">ZIP code or city</Label>
+              <Input
+                id="talent-near"
+                name="nearPostcode"
+                defaultValue={sp.nearPostcode}
+                placeholder="e.g. 10001 or Austin"
+                className="bg-white"
+              />
+            </div>
 
-      <a href={routes.talents} className="text-sm text-blue-600 hover:underline">
-        Clear filters
-      </a>
-    </form>
+            <div className="space-y-1.5">
+              <Label htmlFor="talent-radius">Radius</Label>
+              <NativeSelect
+                id="talent-radius"
+                name="radiusMiles"
+                defaultValue={sp.radiusMiles ?? ""}
+                className="bg-white"
+              >
+                <option value="">Any distance</option>
+                <option value="10">Within 10 miles</option>
+                <option value="25">Within 25 miles</option>
+                <option value="50">Within 50 miles</option>
+              </NativeSelect>
+            </div>
+          </div>
+
+          <ButtonLink href={routes.talents} variant="link" className="h-auto px-0">
+            Clear filters
+          </ButtonLink>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

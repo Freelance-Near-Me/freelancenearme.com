@@ -6,10 +6,12 @@ import { getMyContracts } from "@/actions/contracts";
 import { getProfileForEdit } from "@/actions/profile";
 import { JobCard } from "@/components/job-card";
 import { PageShell } from "@/components/layout/page-shell";
-import { Card, CardBody } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
+import { Card, CardBody } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { requireUser } from "@/lib/auth";
 import { contractStatusLabel, proposalStatusLabel } from "@/lib/labels";
 import { formatMoney } from "@/lib/format";
@@ -30,21 +32,21 @@ export default async function DashboardPage() {
       width="full"
       actions={
         <>
-          <Link href={routes.profile}>
-            <Button variant="secondary">Edit profile</Button>
-          </Link>
+          <ButtonLink href={routes.profile} variant="quiet">
+            Edit profile
+          </ButtonLink>
           {isClient ? (
-            <Link href={routes.postJob}>
-              <Button>Post a job</Button>
-            </Link>
+            <ButtonLink href={routes.postJob} variant="ink">
+              Post a job
+            </ButtonLink>
           ) : (
             <>
-              <Link href={routes.jobs}>
-                <Button>Browse jobs</Button>
-              </Link>
-              <Link href={routes.payouts}>
-                <Button variant="secondary">Payouts</Button>
-              </Link>
+              <ButtonLink href={routes.jobs} variant="ink">
+                Browse jobs
+              </ButtonLink>
+              <ButtonLink href={routes.payouts} variant="quiet">
+                Payouts
+              </ButtonLink>
             </>
           )}
         </>
@@ -73,17 +75,18 @@ async function ProfileCompletenessBanner() {
   if (completeness.percent >= 100) return null;
 
   return (
-    <Card className="mb-8 border-amber-200 bg-amber-50">
-      <CardBody>
-        <p className="font-medium text-amber-900">Complete your profile ({completeness.percent}%)</p>
-        <p className="mt-1 text-sm text-amber-800">
-          Still needed: {completeness.missing.join(", ")}.
-        </p>
-        <Link href={routes.profile} className="mt-3 inline-block text-sm font-medium text-amber-900 underline">
+    <Alert variant="warning" className="mb-8">
+      <AlertTitle>Complete your profile ({completeness.percent}%)</AlertTitle>
+      <AlertDescription>
+        <p className="mb-3">Still needed: {completeness.missing.join(", ")}.</p>
+        <div className="mb-3 w-full max-w-sm">
+          <Progress value={completeness.percent} className="w-full" />
+        </div>
+        <ButtonLink href={routes.profile} variant="link" className="h-auto px-0 text-ochre-700">
           Finish profile
-        </Link>
-      </CardBody>
-    </Card>
+        </ButtonLink>
+      </AlertDescription>
+    </Alert>
   );
 }
 

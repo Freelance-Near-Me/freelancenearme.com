@@ -4,7 +4,7 @@ import { getProfileForEdit, updateProfile } from "@/actions/profile";
 import { listSkills } from "@/actions/skills";
 import { PageShell } from "@/components/layout/page-shell";
 import { SkillPicker } from "@/components/skill-picker";
-import { Field } from "@/components/ui/field";
+import { Field } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import { PortfolioPanel } from "@/components/portfolio-panel";
 import { requireUser } from "@/lib/auth";
