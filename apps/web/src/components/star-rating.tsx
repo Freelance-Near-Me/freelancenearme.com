@@ -20,7 +20,7 @@ export function StarRating({
         return (
           <svg
             key={i}
-            className={cn(sizeClass, filled ? "text-amber-400" : "text-slate-200")}
+            className={cn(sizeClass, filled ? "text-ochre-500" : "text-ink-200")}
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden
@@ -47,7 +47,7 @@ export function StarRatingInput({ name = "rating", defaultValue = 5 }: { name?: 
               defaultChecked={n === defaultValue}
               className="peer sr-only"
             />
-            <span className="block rounded p-1 text-2xl text-slate-300 peer-checked:text-amber-400 hover:text-amber-300">
+            <span className="block rounded p-1 text-2xl text-ink-200 peer-checked:text-ochre-500 hover:text-ochre-500">
               ★
             </span>
           </label>

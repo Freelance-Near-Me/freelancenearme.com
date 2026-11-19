@@ -22,7 +22,7 @@ export default async function InboxThreadPage({
       description="Contract conversation"
       width="md"
       actions={
-        <Link href={routes.job(thread.job.slug)} className="text-sm font-medium text-blue-600">
+        <Link href={routes.job(thread.job.slug)} className="text-sm font-medium text-ochre-700">
           View job
         </Link>
       }

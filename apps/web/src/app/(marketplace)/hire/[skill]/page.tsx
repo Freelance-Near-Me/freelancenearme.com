@@ -35,13 +35,13 @@ export default async function HireBySkillPage({ params }: { params: Promise<{ sk
     >
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="font-serif text-2xl text-slate-900">Talent</h2>
-          <Link href={routes.talents} className="text-sm font-medium text-blue-600 hover:underline">
+          <h2 className="font-serif text-2xl text-ink-900">Talent</h2>
+          <Link href={routes.talents} className="text-sm font-medium text-ochre-700 hover:underline">
             View all →
           </Link>
         </div>
         {talents.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">No verified freelancers with this skill yet.</p>
+          <p className="mt-4 text-sm text-ink-500">No verified freelancers with this skill yet.</p>
         ) : (
           <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {talents.map((t) => {
@@ -74,13 +74,13 @@ export default async function HireBySkillPage({ params }: { params: Promise<{ sk
 
       <section className="mt-14">
         <div className="flex items-end justify-between">
-          <h2 className="font-serif text-2xl text-slate-900">Open jobs</h2>
-          <Link href={routes.jobs} className="text-sm font-medium text-blue-600 hover:underline">
+          <h2 className="font-serif text-2xl text-ink-900">Open jobs</h2>
+          <Link href={routes.jobs} className="text-sm font-medium text-ochre-700 hover:underline">
             View all →
           </Link>
         </div>
         {jobs.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">No open jobs tagged with this skill.</p>
+          <p className="mt-4 text-sm text-ink-500">No open jobs tagged with this skill.</p>
         ) : (
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             {jobs.map((job) => (

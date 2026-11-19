@@ -53,13 +53,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       )}
       {category.skills.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-semibold text-slate-700">Popular skills</h2>
+          <h2 className="text-sm font-semibold text-ink-700">Popular skills</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {category.skills.map((skill) => (
               <Link
                 key={skill.id}
                 href={routes.hire(skill.slug)}
-                className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                className="rounded-full bg-bone-50 px-3 py-1 text-sm text-ink-700 hover:bg-blue-50 hover:text-blue-700"
               >
                 {skill.name}
               </Link>

@@ -32,19 +32,19 @@ function formatWhen(date: Date) {
 
 export function ContractActivityTimeline({ activities }: { activities: Activity[] }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h2 className="text-lg font-semibold text-slate-900">Activity</h2>
+    <section className="rounded-2xl border border-bone-200 bg-white p-5">
+      <h2 className="text-lg font-semibold text-ink-900">Activity</h2>
       <ul className="mt-4 space-y-4">
         {activities.map((a) => (
-          <li key={a.id} className="relative border-l-2 border-slate-200 pl-4">
+          <li key={a.id} className="relative border-l-2 border-bone-200 pl-4">
             <span
-              className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${typeColors[a.type] ?? "bg-slate-100 text-slate-700"}`}
+              className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${typeColors[a.type] ?? "bg-bone-50 text-ink-700"}`}
             >
               {a.type.replace(/_/g, " ").toLowerCase()}
             </span>
-            <p className="mt-1 text-sm font-medium text-slate-900">{a.title}</p>
-            {a.body && <p className="text-sm text-slate-600">{a.body}</p>}
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-sm font-medium text-ink-900">{a.title}</p>
+            {a.body && <p className="text-sm text-ink-500">{a.body}</p>}
+            <p className="mt-1 text-xs text-ink-500">
               {a.actor
                 ? `${a.actor.firstName} ${a.actor.lastName} · `
                 : null}
@@ -53,7 +53,7 @@ export function ContractActivityTimeline({ activities }: { activities: Activity[
           </li>
         ))}
         {activities.length === 0 && (
-          <p className="text-sm text-slate-500">No activity yet.</p>
+          <p className="text-sm text-ink-500">No activity yet.</p>
         )}
       </ul>
     </section>

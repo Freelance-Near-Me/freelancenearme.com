@@ -46,7 +46,7 @@ export function ContactForm() {
           required
           minLength={10}
           rows={6}
-          className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"
+          className="mt-1 w-full rounded-xl border border-bone-200 bg-white px-3 py-2.5 text-sm"
         />
       </label>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}

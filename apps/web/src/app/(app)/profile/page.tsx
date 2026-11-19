@@ -91,8 +91,8 @@ export default async function ProfilePage() {
       {profile.role === UserRole.TALENT && (
         <>
           <PortfolioPanel />
-          <p className="mt-6 text-center text-sm text-slate-500">
-            <a href={routes.freelancer(profile.username)} className="font-medium text-blue-600 hover:underline">
+          <p className="mt-6 text-center text-sm text-ink-500">
+            <a href={routes.freelancer(profile.username)} className="font-medium text-ochre-700 hover:underline">
               View public profile
             </a>
           </p>

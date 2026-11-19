@@ -101,7 +101,7 @@ async function ClientDashboard() {
     <div className="space-y-10">
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Proposals received</h2>
+          <h2 className="text-lg font-semibold text-ink-900">Proposals received</h2>
         </div>
         {received.length === 0 ? (
           <EmptyState
@@ -115,10 +115,10 @@ async function ClientDashboard() {
                 <Card>
                   <CardBody className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <Link href={routes.job(p.job.slug)} className="font-medium text-blue-600 hover:underline">
+                      <Link href={routes.job(p.job.slug)} className="font-medium text-ochre-700 hover:underline">
                         {p.job.title}
                       </Link>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-1 text-sm text-ink-500">
                         {p.talent.firstName} {p.talent.lastName} · {formatMoney(Number(p.bidAmount))}
                       </p>
                     </div>
@@ -133,10 +133,10 @@ async function ClientDashboard() {
 
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Your jobs</h2>
-          <Link href={routes.postJob} className="text-sm font-medium text-blue-600">
+          <h2 className="text-lg font-semibold text-ink-900">Your jobs</h2>
+          <ButtonLink href={routes.postJob} variant="link" className="h-auto px-0">
             Post new
-          </Link>
+          </ButtonLink>
         </div>
         {jobs.length === 0 ? (
           <EmptyState
@@ -164,9 +164,13 @@ async function ClientDashboard() {
                   proposalCount={job._count.proposals}
                   location={{ city: job.city, country: job.country, postcode: job.postcode }}
                 />
-                <Link href={routes.jobEdit(job.slug)} className="mt-2 inline-block text-sm font-medium text-blue-600">
+                <ButtonLink
+                  href={routes.jobEdit(job.slug)}
+                  variant="link"
+                  className="mt-2 h-auto px-0"
+                >
                   Edit job
-                </Link>
+                </ButtonLink>
               </div>
             ))}
           </div>
@@ -189,21 +193,21 @@ async function TalentDashboard() {
   return (
     <div className="space-y-10">
       {!stripeReady && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardBody>
-            <p className="font-medium text-amber-900">Set up payouts to get paid</p>
-            <p className="mt-1 text-sm text-amber-800">
+        <Alert variant="warning">
+          <AlertTitle>Set up payouts to get paid</AlertTitle>
+          <AlertDescription>
+            <p className="mb-2">
               Complete Stripe Connect onboarding before clients can fund milestones.
             </p>
-            <Link href={routes.payouts} className="mt-3 inline-block text-sm font-medium text-amber-900 underline">
+            <ButtonLink href={routes.payouts} variant="link" className="h-auto px-0 text-ochre-700">
               Go to payouts
-            </Link>
-          </CardBody>
-        </Card>
+            </ButtonLink>
+          </AlertDescription>
+        </Alert>
       )}
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">Your proposals</h2>
+        <h2 className="mb-4 text-lg font-semibold text-ink-900">Your proposals</h2>
         {proposals.length === 0 ? (
           <EmptyState
             title="No proposals yet"
@@ -217,10 +221,10 @@ async function TalentDashboard() {
                 <Card>
                   <CardBody className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <Link href={routes.job(p.job.slug)} className="font-medium text-blue-600 hover:underline">
+                      <Link href={routes.job(p.job.slug)} className="font-medium text-ochre-700 hover:underline">
                         {p.job.title}
                       </Link>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-1 text-sm text-ink-500">
                         {formatMoney(Number(p.bidAmount))} · {p.deliveryDays} days
                       </p>
                     </div>
@@ -248,7 +252,7 @@ function ContractsSection({
 }) {
   return (
     <section>
-      <h2 className="mb-4 text-lg font-semibold text-slate-900">{title}</h2>
+      <h2 className="mb-4 text-lg font-semibold text-ink-900">{title}</h2>
       {contracts.length === 0 ? (
         <EmptyState title="No active contracts" description="Contracts appear after you send or accept an offer." />
       ) : (
@@ -256,11 +260,11 @@ function ContractsSection({
           {contracts.map((c) => (
             <li key={c.id}>
               <Link href={routes.contract(c.id)}>
-                <Card className="transition hover:border-blue-200 hover:shadow-md">
+                <Card className="transition hover:border-ochre-500/45 hover:shadow-soft">
                   <CardBody className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="font-medium text-slate-900">{c.title}</p>
-                      <p className="mt-1 text-sm text-slate-600">{formatMoney(Number(c.amount))}</p>
+                      <p className="font-medium text-ink-900">{c.title}</p>
+                      <p className="mt-1 text-sm text-ink-500">{formatMoney(Number(c.amount))}</p>
                     </div>
                     <Badge variant={c.status === "ACTIVE" ? "success" : "info"}>
                       {contractStatusLabel(c.status)}

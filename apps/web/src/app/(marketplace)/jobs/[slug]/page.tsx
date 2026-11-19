@@ -62,8 +62,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-        <span className="font-semibold text-slate-900">
+      <div className="flex flex-wrap gap-3 text-sm text-ink-500">
+        <span className="font-semibold text-ink-900">
           {formatBudgetRange(job.budgetMin, job.budgetMax, job.billingMode)}
         </span>
         <span>·</span>
@@ -78,11 +78,11 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
         )}
       </div>
 
-      <p className="mt-8 whitespace-pre-wrap leading-relaxed text-slate-700">{job.description}</p>
+      <p className="mt-8 whitespace-pre-wrap leading-relaxed text-ink-700">{job.description}</p>
 
       {canPropose && !alreadyProposed && (
-        <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Submit a proposal</h2>
+        <div className="mt-10 rounded-2xl border border-bone-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-ink-900">Submit a proposal</h2>
           <div className="mt-4">
             <ProposalForm jobId={job.id} />
           </div>
@@ -99,7 +99,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
 
       {isOwner && (
         <section className="mt-12">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-ink-900">
             Proposals ({job.proposals.length})
           </h2>
           <div className="mt-6">

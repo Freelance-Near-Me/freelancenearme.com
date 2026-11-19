@@ -4,7 +4,7 @@ export function BackLink({ href, children }: { href: string; children: React.Rea
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+      className="inline-flex items-center gap-1 text-sm font-medium text-ochre-700 hover:text-blue-700"
     >
       <span aria-hidden>←</span>
       {children}

@@ -21,5 +21,3 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 }
 
 export { Input };
-export { Textarea } from "@/components/ui/textarea";
-export { NativeSelect as Select } from "@/components/ui/native-select";

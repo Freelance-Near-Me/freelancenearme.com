@@ -19,9 +19,9 @@ export function SaveSearchForm({ filtersJson }: { filtersJson: string }) {
   }
 
   return (
-    <form action={handleSubmit} className="mt-4 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+    <form action={handleSubmit} className="mt-4 flex flex-wrap items-end gap-3 rounded-xl border border-bone-200 bg-bone-50 p-4">
       <label className="block flex-1 text-sm">
-        <span className="font-medium text-slate-700">Save this search</span>
+        <span className="font-medium text-ink-700">Save this search</span>
         <Input name="label" required placeholder="e.g. React jobs near Manchester" className="mt-1 bg-white" />
       </label>
       <Button type="submit" variant="secondary">
