@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Geist } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getClerkPublishableKey, isClerkConfigured } from "@/lib/env-clerk";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
@@ -27,15 +30,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const hasClerk = isClerkConfigured();
 
   const inner = (
-    <>
+    <TooltipProvider>
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
-    </>
+      <Toaster richColors closeButton position="top-right" />
+    </TooltipProvider>
   );
 
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang="en" className={cn(geist.variable, fraunces.variable, "font-sans")}>
       <body className="flex min-h-screen flex-col font-sans">
         {hasClerk && publishableKey ? (
           <ClerkProvider publishableKey={publishableKey}>{inner}</ClerkProvider>

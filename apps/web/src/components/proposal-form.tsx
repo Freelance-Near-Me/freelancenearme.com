@@ -18,7 +18,7 @@ export function ProposalForm({ jobId }: { jobId: string }) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+    <form action={handleSubmit} className="space-y-4 rounded-2xl border border-bone-200 bg-white p-6">
       <input type="hidden" name="jobId" value={jobId} />
       <h3 className="text-lg font-semibold">Submit your proposal</h3>
       <label className="block text-sm">
@@ -28,7 +28,7 @@ export function ProposalForm({ jobId }: { jobId: string }) {
           required
           minLength={20}
           rows={5}
-          className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2"
+          className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2"
           placeholder="Why you're a great fit…"
         />
       </label>
@@ -40,7 +40,7 @@ export function ProposalForm({ jobId }: { jobId: string }) {
             type="number"
             min={1}
             required
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2"
+            className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2"
           />
         </label>
         <label className="block text-sm">
@@ -52,7 +52,7 @@ export function ProposalForm({ jobId }: { jobId: string }) {
             max={365}
             required
             defaultValue={14}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2"
+            className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2"
           />
         </label>
       </div>

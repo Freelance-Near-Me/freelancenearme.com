@@ -48,7 +48,7 @@ export default async function JobsPage({
     <PageShell title="Find work" description="Browse open freelance projects" width="full">
       <JobFiltersForm searchParams={sp} />
 
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 text-sm text-ink-500">
         {jobs.length} {jobs.length === 1 ? "project" : "projects"}
       </p>
 

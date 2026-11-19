@@ -42,29 +42,30 @@ export default async function NotificationsPage() {
         <ul className="space-y-3">
           {notifications.map((n) => (
             <li key={n.id}>
-              <Card
-                className={n.read ? "" : "border-blue-200 bg-blue-50/30"}
-              >
+              <Card className={n.read ? undefined : "border-ochre-500/35 bg-ochre-100/40"}>
                 <CardBody>
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="font-medium text-slate-900">{n.title}</p>
-                      <p className="mt-1 text-sm text-slate-600">{n.body}</p>
-                      <p className="mt-2 text-xs text-slate-500">{formatDateTime(n.createdAt)}</p>
+                      <p className="font-medium text-ink-900">{n.title}</p>
+                      <p className="mt-1 text-sm text-ink-500">{n.body}</p>
+                      <p className="mt-2 text-xs text-ink-500">{formatDateTime(n.createdAt)}</p>
                     </div>
                     {!n.read && (
                       <form action={markNotificationRead.bind(null, n.id)}>
-                        <Button type="submit" variant="ghost" className="text-xs">
+                        <Button type="submit" variant="ghost" size="sm">
                           Mark read
                         </Button>
                       </form>
                     )}
                   </div>
-                  {n.href && (
-                    <Link href={n.href} className="mt-3 inline-block text-sm font-medium text-blue-600">
+                  {n.href ? (
+                    <Link
+                      href={n.href}
+                      className="mt-3 inline-block text-sm font-medium text-ochre-700 hover:underline"
+                    >
                       View details →
                     </Link>
-                  )}
+                  ) : null}
                 </CardBody>
               </Card>
             </li>

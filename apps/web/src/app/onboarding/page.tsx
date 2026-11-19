@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { completeOnboarding } from "@/actions/onboarding";
 import { PageShell } from "@/components/layout/page-shell";
-import { Field } from "@/components/ui/field";
+import { Field } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 import { routes } from "@/lib/routes";

@@ -46,7 +46,7 @@ export function JobForm({
           required
           minLength={5}
           defaultValue={d.title}
-          className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+          className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5"
         />
       </label>
       <label className="block text-sm">
@@ -57,7 +57,7 @@ export function JobForm({
           minLength={20}
           rows={8}
           defaultValue={d.description}
-          className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+          className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5"
         />
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -69,7 +69,7 @@ export function JobForm({
             min={0}
             required
             defaultValue={d.budgetMin}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+            className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5"
           />
         </label>
         <label className="block text-sm">
@@ -80,7 +80,7 @@ export function JobForm({
             min={0}
             required
             defaultValue={d.budgetMax}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+            className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5"
           />
         </label>
       </div>
@@ -95,15 +95,15 @@ export function JobForm({
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block text-sm">
           <span className="font-medium">ZIP code</span>
-          <input name="postcode" defaultValue={d.postcode} placeholder="e.g. 10001" className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+          <input name="postcode" defaultValue={d.postcode} placeholder="e.g. 10001" className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5" />
         </label>
         <label className="block text-sm">
           <span className="font-medium">City</span>
-          <input name="city" defaultValue={d.city} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+          <input name="city" defaultValue={d.city} className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5" />
         </label>
         <label className="block text-sm">
           <span className="font-medium">Country</span>
-          <input name="country" defaultValue={d.country} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5" />
+          <input name="country" defaultValue={d.country} className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5" />
         </label>
       </div>
       {categories.length > 0 && (
@@ -112,7 +112,7 @@ export function JobForm({
           <select
             name="categoryId"
             defaultValue={d.categoryId ?? ""}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5"
+            className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5"
           >
             <option value="">Select a category</option>
             {categories.map((c) => (
@@ -170,7 +170,7 @@ function Select({
       <select
         name={name}
         defaultValue={defaultValue ?? options[0]}
-        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 capitalize"
+        className="mt-1 w-full rounded-xl border border-bone-200 px-3 py-2.5 capitalize"
       >
         {options.map((o) => (
           <option key={o} value={o}>

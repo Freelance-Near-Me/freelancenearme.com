@@ -22,11 +22,11 @@ export default async function EditJobPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <Link href={`/jobs/${slug}`} className="text-sm text-blue-600">
+      <Link href={`/jobs/${slug}`} className="text-sm text-ochre-700">
         ← Back to job
       </Link>
-      <h1 className="mt-6 font-serif text-4xl text-slate-900">Edit job</h1>
-      <p className="mt-2 capitalize text-slate-600">Status: {job.status.toLowerCase()}</p>
+      <h1 className="mt-6 font-serif text-4xl text-ink-900">Edit job</h1>
+      <p className="mt-2 capitalize text-ink-500">Status: {job.status.toLowerCase()}</p>
 
       {job.status === JobStatus.DRAFT && (
         <form action={publishJob.bind(null, slug)} className="mt-4">

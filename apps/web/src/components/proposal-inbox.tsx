@@ -32,7 +32,7 @@ export function ProposalInbox({
   jobSlug: string;
 }) {
   if (proposals.length === 0) {
-    return <p className="text-slate-600">No proposals yet.</p>;
+    return <p className="text-ink-500">No proposals yet.</p>;
   }
 
   return (
@@ -43,18 +43,18 @@ export function ProposalInbox({
             <CardBody>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-ink-900">
                 {p.talent.firstName} {p.talent.lastName}{" "}
-                <span className="font-normal text-slate-500">@{p.talent.username}</span>
+                <span className="font-normal text-ink-500">@{p.talent.username}</span>
               </p>
               {p.talent.talentProfile?.headline && (
-                <p className="text-sm text-slate-600">{p.talent.talentProfile.headline}</p>
+                <p className="text-sm text-ink-500">{p.talent.talentProfile.headline}</p>
               )}
-              <p className="mt-2 line-clamp-3 text-sm text-slate-700">{p.coverLetter}</p>
+              <p className="mt-2 line-clamp-3 text-sm text-ink-700">{p.coverLetter}</p>
             </div>
             <div className="text-right text-sm">
               <p className="font-semibold">{formatMoney(parseFloat(p.bidAmount.toString()))}</p>
-              <p className="text-slate-500">{p.deliveryDays} days</p>
+              <p className="text-ink-500">{p.deliveryDays} days</p>
               <Badge className="mt-2">{proposalStatusLabel(p.status)}</Badge>
             </div>
           </div>

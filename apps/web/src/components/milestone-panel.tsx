@@ -1,10 +1,11 @@
 import { MilestoneStatus } from "@fnm/database";
 import { createMilestone, updateMilestoneStatus } from "@/actions/milestones";
 import { createMilestoneCheckout } from "@/actions/payments";
-import { Field } from "@/components/ui/field";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Field } from "@/components/ui/form-field";
 import { Money } from "@/components/money/money";
 import { MILESTONE_STATUS_LABEL } from "@/lib/labels";
 import { isStripeConfigured } from "@/lib/stripe";
@@ -38,21 +39,23 @@ export function MilestonePanel({
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-slate-900">Milestones</h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <h2 className="text-lg font-semibold text-ink-900">Milestones</h2>
+      <p className="mt-1 text-sm text-ink-500">
         {stripeOn
           ? `Fund via Stripe Checkout. Platform fee: ${process.env.NEXT_PUBLIC_PLATFORM_FEE_PERCENT ?? "10"}%.`
           : "Add STRIPE_SECRET_KEY to enable live payments."}
       </p>
 
       {!talentPayoutsReady && contractActive && (
-        <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
-          Talent must{" "}
-          <a href={routes.payouts} className="font-semibold underline">
-            connect Stripe payouts
-          </a>{" "}
-          before milestones can be funded.
-        </p>
+        <Alert variant="warning" className="mt-4">
+          <AlertDescription>
+            Talent must{" "}
+            <a href={routes.payouts} className="font-semibold underline">
+              connect Stripe payouts
+            </a>{" "}
+            before milestones can be funded.
+          </AlertDescription>
+        </Alert>
       )}
 
       <ul className="mt-6 space-y-3">
@@ -62,16 +65,16 @@ export function MilestonePanel({
               <CardBody>
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="font-medium text-slate-900">{m.title}</p>
+                    <p className="font-medium text-ink-900">{m.title}</p>
                     {m.description && (
-                      <p className="mt-1 text-sm text-slate-600">{m.description}</p>
+                      <p className="mt-1 text-sm text-ink-500">{m.description}</p>
                     )}
                   </div>
                   <div className="text-right text-sm">
                     <p className="font-semibold">
                       <Money amount={Number(m.amount)} size="sm" />
                     </p>
-                    <p className="text-slate-500">{MILESTONE_STATUS_LABEL[m.status]}</p>
+                    <p className="text-ink-500">{MILESTONE_STATUS_LABEL[m.status]}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -114,10 +117,10 @@ export function MilestonePanel({
       {isClient && contractActive && (
         <form
           action={createMilestone}
-          className="mt-8 space-y-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-6"
+          className="mt-8 space-y-4 rounded-2xl border border-dashed border-bone-200 bg-bone-50/50 p-6"
         >
           <input type="hidden" name="contractId" value={contractId} />
-          <h3 className="font-medium text-slate-900">Add milestone</h3>
+          <h3 className="font-medium text-ink-900">Add milestone</h3>
           <Field label="Title" name="title" required />
           <Field label="Amount ($)" name="amount" type="number" required />
           <Field label="Description" name="description" as="textarea" rows={2} />

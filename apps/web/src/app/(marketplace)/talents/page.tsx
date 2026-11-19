@@ -38,7 +38,7 @@ export default async function TalentsPage({
     >
       <TalentFilters searchParams={sp} />
 
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 text-sm text-ink-500">
         {talents.length} {talents.length === 1 ? "freelancer" : "freelancers"}
       </p>
 

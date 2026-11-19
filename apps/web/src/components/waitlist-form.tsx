@@ -36,14 +36,14 @@ export function WaitlistForm({
   }
 
   return (
-    <form action={handleSubmit} className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <form action={handleSubmit} className="space-y-3 rounded-2xl border border-bone-200 bg-bone-50 p-4">
       <input type="hidden" name="categoryId" value={categoryId ?? ""} />
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">Email</span>
+        <span className="font-medium text-ink-700">Email</span>
         <Input name="email" type="email" required className="mt-1 bg-white" placeholder="you@example.com" />
       </label>
       <label className="block text-sm">
-        <span className="font-medium text-slate-700">ZIP code</span>
+        <span className="font-medium text-ink-700">ZIP code</span>
         <Input
           name="postcode"
           defaultValue={defaultPostcode}

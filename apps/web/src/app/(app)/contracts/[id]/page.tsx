@@ -80,21 +80,21 @@ export default async function ContractPage({
         <CardBody>
           <dl className="grid gap-4 text-sm sm:grid-cols-3">
             <div>
-              <dt className="text-slate-500">Client</dt>
-              <dd className="font-medium text-slate-900">
+              <dt className="text-ink-500">Client</dt>
+              <dd className="font-medium text-ink-900">
                 {contract.client.firstName} {contract.client.lastName}
               </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Talent</dt>
-              <dd className="font-medium text-slate-900">
+              <dt className="text-ink-500">Talent</dt>
+              <dd className="font-medium text-ink-900">
                 {contract.talent.firstName} {contract.talent.lastName}
               </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Related job</dt>
+              <dt className="text-ink-500">Related job</dt>
               <dd>
-                <Link href={routes.job(contract.job.slug)} className="font-medium text-blue-600">
+                <Link href={routes.job(contract.job.slug)} className="font-medium text-ochre-700">
                   View job
                 </Link>
               </dd>
@@ -110,7 +110,7 @@ export default async function ContractPage({
               Mark contract complete
             </Button>
           </form>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-ink-500">
             Mark complete when all work is delivered. You can leave a review afterward.
           </p>
         </div>
@@ -124,7 +124,7 @@ export default async function ContractPage({
 
       {review && (
         <div className="mb-8">
-          <h3 className="mb-3 font-semibold text-slate-900">Review</h3>
+          <h3 className="mb-3 font-semibold text-ink-900">Review</h3>
           <ReviewsList
             reviews={[
               {

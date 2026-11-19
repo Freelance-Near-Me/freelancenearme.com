@@ -4,7 +4,7 @@ import { getProfileForEdit, updateProfile } from "@/actions/profile";
 import { listSkills } from "@/actions/skills";
 import { PageShell } from "@/components/layout/page-shell";
 import { SkillPicker } from "@/components/skill-picker";
-import { Field } from "@/components/ui/field";
+import { Field } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import { PortfolioPanel } from "@/components/portfolio-panel";
 import { requireUser } from "@/lib/auth";
@@ -91,8 +91,8 @@ export default async function ProfilePage() {
       {profile.role === UserRole.TALENT && (
         <>
           <PortfolioPanel />
-          <p className="mt-6 text-center text-sm text-slate-500">
-            <a href={routes.freelancer(profile.username)} className="font-medium text-blue-600 hover:underline">
+          <p className="mt-6 text-center text-sm text-ink-500">
+            <a href={routes.freelancer(profile.username)} className="font-medium text-ochre-700 hover:underline">
               View public profile
             </a>
           </p>

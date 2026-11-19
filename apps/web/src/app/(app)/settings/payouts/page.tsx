@@ -25,8 +25,8 @@ export default async function PayoutsSettingsPage({
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-slate-900">Stripe payouts</h2>
-      <p className="mt-2 text-sm text-slate-600">
+      <h2 className="text-xl font-semibold text-ink-900">Stripe payouts</h2>
+      <p className="mt-2 text-sm text-ink-500">
         Connect Stripe to receive milestone payments when clients approve your work.
       </p>
 
@@ -42,15 +42,15 @@ export default async function PayoutsSettingsPage({
           <CardBody className="space-y-4">
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Account</dt>
+                <dt className="text-ink-500">Account</dt>
                 <dd className="truncate font-mono text-xs">{status.accountId ?? "Not connected"}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Charges enabled</dt>
+                <dt className="text-ink-500">Charges enabled</dt>
                 <dd>{status.chargesEnabled ? "Yes" : "No"}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Payouts enabled</dt>
+                <dt className="text-ink-500">Payouts enabled</dt>
                 <dd>{status.payoutsEnabled ? "Yes" : "No"}</dd>
               </div>
             </dl>

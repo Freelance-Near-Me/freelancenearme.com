@@ -6,6 +6,8 @@ import { listProofClients, getFeaturedTestimonial } from "@/actions/proof";
 import { PortraitCard, type PortraitTalent } from "@/components/home/portrait-card";
 import { TimezoneBand } from "@/components/home/timezone-band";
 import { CategoryGrid } from "@/components/category-grid";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { isDatabaseConfigured } from "@/lib/env";
 import { platformFeePercent } from "@/lib/fees";
 import { routes } from "@/lib/routes";
@@ -106,17 +108,17 @@ export default async function HomePage() {
                 <label className="sr-only" htmlFor="near-search">
                   ZIP code or city
                 </label>
-                <input
+                <Input
                   id="near-search"
                   name="nearPostcode"
                   placeholder="ZIP code or city, e.g. 10001 or Austin"
-                  className="w-full rounded-lg border border-bone-200 bg-white px-4 py-3 text-sm text-ink-900 sm:max-w-sm"
+                  className="h-11 bg-white sm:max-w-sm"
                 />
                 <input type="hidden" name="radiusMiles" value="50" />
-                <button type="submit" className="btn-elite">
+                <Button type="submit" variant="ochre" size="lg">
                   Search near you
-                  <ArrowRight className="ml-1.5 h-4 w-4" />
-                </button>
+                  <ArrowRight className="size-4" />
+                </Button>
               </form>
               <div className="mt-4 flex flex-wrap gap-4 text-sm">
                 <Link href={routes.talents} className="font-semibold text-eucalyptus hover:text-eucalyptus-deep">
@@ -267,12 +269,12 @@ export default async function HomePage() {
                 Review proposals, hire, and release payment only when you approve the work. The platform fee is {feePercent}%.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
-                <Link href={routes.postJob} className="btn-elite">
+                <ButtonLink href={routes.postJob} variant="ochre">
                   Post a project
-                </Link>
-                <Link href={routes.talents} className="btn-secondary">
+                </ButtonLink>
+                <ButtonLink href={routes.talents} variant="quiet">
                   Browse talent
-                </Link>
+                </ButtonLink>
               </div>
             </div>
             <div className="card-featured p-8">
@@ -284,12 +286,12 @@ export default async function HomePage() {
                 That is the check clients see. Completed work and reviews build your public score after that.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
-                <Link href={routes.signUp("talent")} className="btn-elite">
+                <ButtonLink href={routes.signUp("talent")} variant="ochre">
                   Create a freelancer account
-                </Link>
-                <Link href={routes.jobs} className="btn-secondary">
+                </ButtonLink>
+                <ButtonLink href={routes.jobs} variant="quiet">
                   Find work
-                </Link>
+                </ButtonLink>
               </div>
             </div>
           </div>

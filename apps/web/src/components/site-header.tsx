@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
 import { getUnreadMessageCount } from "@/actions/inbox";
 import { routes } from "@/lib/routes";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { ButtonLink } from "@/components/ui/button";
 
 const publicLinks = [
@@ -61,108 +62,71 @@ export async function SiteHeader() {
           ))}
         </nav>
 
-        <details className="relative md:hidden">
-          <summary className="cursor-pointer list-none rounded-lg border border-bone-200 px-3 py-1.5 text-sm font-medium text-ink-700 [&::-webkit-details-marker]:hidden">
-            Menu
-          </summary>
-          <div className="absolute right-0 z-50 mt-2 flex w-56 flex-col gap-2 rounded-xl border border-bone-200 bg-white p-3 shadow-lg">
-            {publicLinks.map((l) => (
-              <Link key={l.href} href={l.href} className="text-sm font-medium text-ink-700">
-                {l.label}
-              </Link>
-            ))}
+        <div className="flex items-center gap-2 md:gap-3">
+          <MobileNav hasClerk={hasClerk} />
+          <div className="hidden items-center gap-2 md:flex md:gap-3">
             {hasClerk ? (
               <>
                 <Show when="signed-out">
-                  <Link href={routes.signIn} className="text-sm font-medium text-ink-700">
+                  <Link
+                    href={routes.signIn}
+                    className="hidden text-sm font-medium text-ink-700 sm:inline"
+                  >
                     Log in
                   </Link>
+                  <ButtonLink href={routes.talents} variant="quiet" className="hidden sm:inline-flex">
+                    Browse talent
+                  </ButtonLink>
                   <ButtonLink href={routes.signUp("client")} variant="ink">
                     Post a project
                   </ButtonLink>
                 </Show>
                 <Show when="signed-in">
-                  <Link href={routes.inbox} className="text-sm font-medium text-ink-700">
+                  <Link
+                    href={routes.inbox}
+                    className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
+                  >
                     Inbox
+                    <NotificationBadge count={unreadMessages} />
                   </Link>
-                  <Link href={routes.notifications} className="text-sm font-medium text-ink-700">
+                  <Link
+                    href={routes.notifications}
+                    className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
+                  >
                     Alerts
+                    <NotificationBadge count={unread} />
                   </Link>
-                  <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
+                  <Link
+                    href={routes.dashboard}
+                    className="hidden text-sm font-medium text-ink-700 md:inline"
+                  >
                     Dashboard
                   </Link>
+                  {user?.role === UserRole.CLIENT && (
+                    <ButtonLink href={routes.postJob} variant="quiet" className="hidden md:inline-flex">
+                      Post job
+                    </ButtonLink>
+                  )}
+                  <UserButton />
                 </Show>
               </>
             ) : (
-              <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
-                Dashboard
-              </Link>
-            )}
-          </div>
-        </details>
-
-        <div className="hidden items-center gap-2 md:flex md:gap-3">
-          {hasClerk ? (
-            <>
-              <Show when="signed-out">
-                <Link
-                  href={routes.signIn}
-                  className="hidden text-sm font-medium text-ink-700 sm:inline"
-                >
-                  Log in
-                </Link>
-                <ButtonLink href={routes.talents} variant="quiet" className="hidden sm:inline-flex">
-                  Browse talent
-                </ButtonLink>
-                <ButtonLink href={routes.signUp("client")} variant="ink">
-                  Post a project
-                </ButtonLink>
-              </Show>
-              <Show when="signed-in">
-                <Link
-                  href={routes.inbox}
-                  className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
-                >
-                  Inbox
-                  <NotificationBadge count={unreadMessages} />
-                </Link>
-                <Link
-                  href={routes.notifications}
-                  className="relative hidden px-2 text-sm font-medium text-ink-700 sm:inline"
-                >
-                  Alerts
-                  <NotificationBadge count={unread} />
-                </Link>
-                <Link
-                  href={routes.dashboard}
-                  className="hidden text-sm font-medium text-ink-700 md:inline"
-                >
+              <>
+                {user && (
+                  <Link
+                    href={routes.notifications}
+                    className="relative text-sm font-medium text-ink-700"
+                  >
+                    Alerts
+                    <NotificationBadge count={unread} />
+                  </Link>
+                )}
+                <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
                   Dashboard
                 </Link>
-                {user?.role === UserRole.CLIENT && (
-                  <ButtonLink href={routes.postJob} variant="quiet" className="hidden md:inline-flex">
-                    Post job
-                  </ButtonLink>
-                )}
-                <UserButton />
-              </Show>
-            </>
-          ) : (
-            <>
-              {user && (
-                <Link
-                  href={routes.notifications}
-                  className="relative text-sm font-medium text-ink-700"
-                >
-                  Alerts
-                  <NotificationBadge count={unread} />
-                </Link>
-              )}
-              <Link href={routes.dashboard} className="text-sm font-medium text-ink-700">
-                Dashboard
-              </Link>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

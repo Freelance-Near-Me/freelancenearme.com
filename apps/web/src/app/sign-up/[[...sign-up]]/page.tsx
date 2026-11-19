@@ -14,8 +14,8 @@ export default async function SignUpPage({
     return (
       <SetupNotice title="Sign-up is not configured">
         <p>
-          Add <code className="rounded bg-slate-100 px-1">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> and{" "}
-          <code className="rounded bg-slate-100 px-1">CLERK_SECRET_KEY</code> in Vercel → Environment
+          Add <code className="rounded bg-bone-50 px-1">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> and{" "}
+          <code className="rounded bg-bone-50 px-1">CLERK_SECRET_KEY</code> in Vercel → Environment
           Variables, then redeploy.
         </p>
       </SetupNotice>
